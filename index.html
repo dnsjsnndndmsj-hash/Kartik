@@ -1311,6 +1311,17 @@
         .insight-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
 
         /* --- FLASHCARDS --- */
+
+        /* --- SWIPEABLE FLASHCARDS --- */
+        .flashcard-wrap { position: relative; }
+        .flashcard {
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            will-change: transform;
+        }
+        .flashcard.swiping {
+            transition: none; /* Disable transition during drag */
+        }
+
         .flashcard-wrap { max-width: 480px; margin: 0 auto; perspective: 1200px; }
         .flashcard {
             position: relative; width: 100%; min-height: 220px;
@@ -2066,12 +2077,90 @@
             .planner-date-badge { margin-left: 0; }
             .planner-nextup { flex-wrap: wrap; }
         }
-    </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
     <!-- 3D Tilt library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 </head>
 <body>
+
+    <!-- Global Command Palette Modal -->
+    <div class="cmd-palette-backdrop" id="cmdPaletteBackdrop">
+        <div class="cmd-palette" id="cmdPalette">
+            <div class="cmd-palette-header">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="cmdPaletteInput" placeholder="Search chapters, tools, games... (Jump to...)">
+                <div class="cmd-palette-hints">
+                    <span class="cmd-hint">esc</span> to close
+                </div>
+            </div>
+            <div class="cmd-palette-results" id="cmdPaletteResults">
+                <!-- Search results will be injected here -->
+            </div>
+        </div>
+    </div>
+
     <canvas id="particle-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;"></canvas>
 
     <div class="scroll-progress-bar" id="scrollProgressBar"></div>
@@ -2084,6 +2173,30 @@
     </button>
 
     <div id="siteAnnouncementBanner" style="display:none;"></div>
+
+
+    <!-- Gemini AI Voice Chat -->
+    <button id="geminiFab" onclick="toggleGeminiChat()" style="position: fixed; bottom: 22px; left: 22px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; border: none; box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5); z-index: 1100; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
+        <i class="fa-solid fa-sparkles"></i>
+    </button>
+
+    <div class="cmd-palette-backdrop" id="geminiBackdrop" style="align-items: flex-end; padding-bottom: 90px; justify-content: flex-start; padding-left: 22px;">
+        <div class="cmd-palette" style="width: 320px; max-height: 400px; border-radius: 20px; animation: none; transform-origin: bottom left; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s;" id="geminiModal">
+            <div style="background: linear-gradient(135deg, #8b5cf6, #3b82f6); padding: 1rem; color: white; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
+                    <i class="fa-solid fa-sparkles"></i> Gemini AI Tutor
+                </div>
+                <button onclick="toggleGeminiChat()" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.8;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="geminiChatLog" style="padding: 1rem; height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--surface); color: var(--text-main); font-size: 0.9rem;">
+                <div style="align-self: flex-start; background: var(--surface-subtle); padding: 0.6rem 1rem; border-radius: 12px 12px 12px 2px; max-width: 85%;">Hi! I'm your AI tutor. Click the mic and ask me a biology, chemistry, or physics question!</div>
+            </div>
+            <div style="padding: 0.8rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; background: var(--surface);">
+                <button id="geminiMicBtn" onclick="startGeminiVoice()" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: var(--primary); border: none; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="geminiTextInput" placeholder="Or type a question..." style="flex: 1; border: 1px solid var(--border); border-radius: 20px; padding: 0 1rem; background: var(--surface-subtle); color: var(--text-main); outline: none;" onkeydown="if(event.key==='Enter') sendGeminiText()">
+            </div>
+        </div>
+    </div>
 
     <div class="lock-screen" id="lockScreen">
         <div class="lock-card">
@@ -2147,8 +2260,11 @@
         <div class="nav-brand">
             🧬 BioMastery Portal
         </div>
+
         <ul class="nav-links">
+            <li><a href="javascript:void(0)" onclick="toggleCmdPalette()">Jump to... <kbd style="background:var(--surface-subtle);border:1px solid var(--border);padding:2px 6px;border-radius:4px;font-size:0.8rem;margin-left:4px;">Ctrl K</kbd></a></li>
             <li><a href="javascript:void(0)" onclick="goToChapter('cellunit')">Chapter 1</a></li>
+
             <li><a href="javascript:void(0)" onclick="goToChapter('overview')">Chapter 2</a></li>
             <li><a href="javascript:void(0)" onclick="goToChapter('livingworld')">Chapter 3</a></li>
             <li><a href="javascript:void(0)" onclick="goToChapter('morphology')">Chapter 4</a></li>
@@ -2730,11 +2846,22 @@
                 <h2 class="section-title"><i class="fa-solid fa-hourglass-half"></i> Focus Timer</h2>
                 <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.2rem;">A simple Pomodoro-style timer to structure your study blocks — 25 minutes of focus, then a short break.</p>
 
+
                 <div class="focus-timer-modes">
-                    <button class="focus-timer-mode-btn active" data-mode="focus" onclick="focusTimerSetMode('focus')">Focus · 25m</button>
-                    <button class="focus-timer-mode-btn" data-mode="short" onclick="focusTimerSetMode('short')">Short Break · 5m</button>
-                    <button class="focus-timer-mode-btn" data-mode="long" onclick="focusTimerSetMode('long')">Long Break · 15m</button>
+                    <button class="focus-timer-mode-btn active" data-mode="focus" onclick="focusTimerSetMode('focus')">Focus &middot; 25m</button>
+                    <button class="focus-timer-mode-btn" data-mode="short" onclick="focusTimerSetMode('short')">Short Break &middot; 5m</button>
+                    <button class="focus-timer-mode-btn" data-mode="long" onclick="focusTimerSetMode('long')">Long Break &middot; 15m</button>
                 </div>
+
+                <div class="focus-timer-sounds" style="margin-bottom: 1.4rem; display: flex; justify-content: center; gap: 1rem; align-items: center;">
+                    <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);"><i class="fa-solid fa-headphones"></i> Ambient Sound:</span>
+                    <select id="focusSoundSelect" class="calc-input" style="width: auto; margin: 0; padding: 0.4rem 0.8rem;" onchange="focusSoundToggle()">
+                        <option value="none">None</option>
+                        <option value="white">White Noise / Rain</option>
+                        <option value="brown">Brown Noise</option>
+                    </select>
+                </div>
+
 
                 <div class="focus-timer-display" id="focusTimerDisplay">25:00</div>
                 <div class="focus-timer-status" id="focusTimerStatus">Ready to focus.</div>
@@ -9336,6 +9463,48 @@
         </div>
         <!-- ===================== END CHEMISTRY VIEW ===================== -->
 
+
+        <!-- ===================== INTERACTIVE PERIODIC TABLE VIEW ===================== -->
+        <div id="view-periodictableui" class="app-view">
+            <button class="subject-back-btn" onclick="switchView('chemistry')">
+                <i class="fa-solid fa-arrow-left"></i> Back to Chemistry
+            </button>
+
+            <div class="hero">
+                <h1>Interactive Periodic Table</h1>
+                <p>Click on any element to view its detailed properties including atomic mass, electron configuration, and more.</p>
+            </div>
+
+            <div class="section-card" style="padding: 1.5rem; overflow-x: auto;">
+                <div id="periodicTableContainer" style="display: grid; grid-template-columns: repeat(18, minmax(45px, 1fr)); gap: 4px; min-width: 900px; margin-bottom: 2rem;">
+                    <!-- Table is generated via JS -->
+                </div>
+                <div id="periodicTableLanthanides" style="display: grid; grid-template-columns: repeat(15, minmax(45px, 1fr)); gap: 4px; min-width: 750px; margin-top: 1rem; padding-left: calc(3 * 45px + 12px);"></div>
+                <div id="periodicTableActinides" style="display: grid; grid-template-columns: repeat(15, minmax(45px, 1fr)); gap: 4px; min-width: 750px; margin-top: 4px; padding-left: calc(3 * 45px + 12px);"></div>
+            </div>
+
+            <!-- Element Info Modal -->
+            <div class="cmd-palette-backdrop" id="ptModalBackdrop" style="align-items: center;">
+                <div class="section-card" style="max-width: 400px; width: 100%; margin: 0; position: relative;">
+                    <button class="neet-modal-close" onclick="document.getElementById('ptModalBackdrop').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
+                    <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
+                        <div id="ptModalSymbol" style="width: 80px; height: 80px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800;"></div>
+                        <div>
+                            <h2 id="ptModalName" style="margin: 0; font-size: 1.6rem;"></h2>
+                            <div id="ptModalNumber" style="color: var(--text-muted); font-weight: 600;"></div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem;">
+                        <div class="quiz-summary-item" style="margin:0;"><div class="qv" id="ptModalMass" style="font-size:1.1rem;"></div><div class="ql">Atomic Mass</div></div>
+                        <div class="quiz-summary-item" style="margin:0;"><div class="qv" id="ptModalGroup" style="font-size:1.1rem;"></div><div class="ql">Group / Block</div></div>
+                    </div>
+                    <div style="background: var(--surface-subtle); padding: 1rem; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; border: 1px solid var(--border);">
+                        <strong>Configuration:</strong><br><span id="ptModalConfig" style="color: var(--primary);"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ===================== PRACTICE VIEW ===================== -->
         <div id="view-practice" class="app-view">
 
@@ -9801,7 +9970,68 @@
             .ssprint-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
             .ssprint-new-best { display:inline-block; margin-top:0.5rem; padding:0.3rem 0.8rem; border-radius:20px; background:var(--accent-light); color:var(--accent); font-weight:700; font-size:0.82rem; }
             @media (max-width:520px) { .ssprint-choices { grid-template-columns:1fr; } }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="sortSprint" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Sort Sprint: Mitosis or Meiosis?
@@ -9854,7 +10084,68 @@
             .seq-start, .seq-results { text-align:center; padding:1.5rem 1rem; }
             .seq-results h3 { font-size:1.4rem; margin-bottom:0.3rem; }
             .seq-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="cellCycleSequencer" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-list-ol"></i> Cell Cycle Sequencer
@@ -9908,7 +10199,68 @@
             .mm-start, .mm-results { text-align:center; padding:1.5rem 1rem; }
             .mm-results h3 { font-size:1.4rem; margin-bottom:0.3rem; }
             .mm-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="memoryMatch" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-clone"></i> Memory Match: Cell Cycle Stages
@@ -9960,7 +10312,68 @@
             .manim-dot { width:10px; height:10px; border-radius:50%; background:var(--border); transition:background 0.3s, transform 0.3s; cursor:pointer; border:none; padding:0; }
             .manim-dot.active { background:var(--primary); transform:scale(1.35); }
             .manim-dot.done { background:var(--success); }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="mitosisAnimation" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-play-circle"></i> Live Mitosis Animation
@@ -10019,7 +10432,68 @@
             .cscr-start, .cscr-results { text-align:center; padding:1.5rem 1rem; }
             .cscr-results h3 { font-size:1.4rem; margin-bottom:0.3rem; }
             .cscr-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="chromoScramble" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-keyboard"></i> Chromosome Scramble
@@ -10142,7 +10616,68 @@
             .fp-signal-item .l { font-size:0.66rem; font-weight:700; text-transform:uppercase; color:var(--text-muted); letter-spacing:0.03em; }
             .fp-signal-item .v { font-size:0.82rem; font-weight:600; margin-top:0.15rem; word-break:break-word; }
             @media (max-width:520px) { .fp-signal-grid { grid-template-columns:1fr; } }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="revisionWheel" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-record-vinyl"></i> Wheel of Revision
@@ -10190,7 +10725,68 @@
             .dc-done i { font-size:2.2rem; color:var(--success); margin-bottom:0.6rem; }
             .dc-explain { margin-top:0.9rem; font-size:0.86rem; color:var(--text-muted); }
             @media (max-width:520px) { .dc-opts { grid-template-columns:1fr; } }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="dailyChallenge" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-calendar-check"></i> Daily Challenge
@@ -10231,7 +10827,68 @@
             .ffz-results h3 { font-size:1.4rem; margin-bottom:0.3rem; }
             .ffz-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
             @media (max-width:480px) { .ffz-opts { grid-template-columns:1fr; } }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="formulaFrenzy" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-square-root-variable"></i> Formula Frenzy
@@ -10279,7 +10936,68 @@
             .pts-cell:disabled, .pts-cell.locked { cursor:default; }
             .pts-footer { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.7rem; margin-top:1.1rem; }
             .pts-round-info { font-size:0.85rem; color:var(--text-muted); font-weight:600; }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="periodicSprint" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-table-cells"></i> Periodic Table Sprint
@@ -10320,7 +11038,68 @@
             .tfb-choice-btn.tfb-true { background:linear-gradient(135deg,#0d9488,#0f766e); }
             .tfb-choice-btn.tfb-false { background:linear-gradient(135deg,#e11d48,#be123c); }
             @media (max-width:520px) { .tfb-choices { grid-template-columns:1fr; } }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="trueFalseBlitz" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-scale-balanced"></i> True or False Blitz
@@ -10370,7 +11149,68 @@
             .rg-msg { margin-top:0.9rem; font-size:0.9rem; color:var(--text-muted); line-height:1.5; min-height:1.4em; }
             .rg-history { display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:1rem; }
             .rg-history-chip { font-family:'JetBrains Mono', monospace; font-size:0.78rem; font-weight:700; background:var(--surface-subtle); border:1px solid var(--border); border-radius:8px; padding:0.3rem 0.6rem; }
-        </style>
+
+        /* --- GLOBAL COMMAND PALETTE --- */
+        .cmd-palette-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 12vh;
+        }
+        .cmd-palette-backdrop.show { display: flex; }
+        .cmd-palette {
+            background: var(--surface);
+            width: 100%;
+            max-width: 600px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.4);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: cmdIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        @keyframes cmdIn { from { opacity: 0; transform: scale(0.96) translateY(-10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .cmd-palette-header {
+            display: flex;
+            align-items: center;
+            padding: 1.2rem 1.4rem;
+            border-bottom: 1px solid var(--border);
+            gap: 1rem;
+        }
+        .cmd-palette-header i { color: var(--text-muted); font-size: 1.2rem; }
+        .cmd-palette-header input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+        }
+        .cmd-palette-header input::placeholder { color: var(--text-muted); opacity: 0.7; }
+        .cmd-palette-hints { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; display: flex; gap: 8px; align-items: center; }
+        .cmd-hint { background: var(--surface-subtle); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--border); }
+        .cmd-palette-results { max-height: 400px; overflow-y: auto; padding: 0.5rem; }
+        .cmd-result-group { margin-bottom: 0.5rem; }
+        .cmd-result-group:last-child { margin-bottom: 0; }
+        .cmd-group-label { font-size: 0.75rem; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.05em; padding: 0.6rem 1rem 0.3rem; }
+        .cmd-result-item {
+            display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem;
+            border-radius: 10px; cursor: pointer; transition: background 0.1s;
+        }
+        .cmd-result-item.selected, .cmd-result-item:hover { background: var(--primary-light); }
+        .cmd-result-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: var(--surface-subtle); color: var(--text-main); font-size: 0.95rem; }
+        .cmd-result-item.selected .cmd-result-icon, .cmd-result-item:hover .cmd-result-icon { background: var(--primary); color: white; }
+        .cmd-result-title { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+        .cmd-result-sub { font-size: 0.8rem; color: var(--text-muted); }
+
+</style>
 
         <section id="readinessGauge" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-gauge-high"></i> NEET Readiness Gauge
@@ -10533,6 +11373,9 @@
                             <span><i class="fa-solid fa-clock"></i> Last active <strong id="profileHeroLastActive">—</strong></span>
                         </div>
                         <div class="avatar-swatches" id="avatarSwatches"></div>
+                        <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); margin-top:1rem; text-transform:uppercase;">Avatar Icon</div>
+                        <div class="avatar-swatches" id="avatarIcons"></div>
+
                     </div>
                 </div>
 
@@ -13792,7 +14635,7 @@
         function lockAnsweredOptions(optionsWrap, item, chosenIdx) {
             optionsWrap.querySelectorAll('.nb-option').forEach(el => {
                 const i = parseInt(el.getAttribute('data-index'), 10);
-                el.classList.add('locked');
+                el.classList.add('locked'); playSoundEffect("correct");
                 if (i === item.answer) el.classList.add('correct');
                 else if (i === chosenIdx) el.classList.add('wrong');
             });
@@ -13880,7 +14723,7 @@
         function renderPracticeSubjectGrid() {
             const grid = document.getElementById('practiceSubjectGrid');
             if (!grid) return;
-            grid.innerHTML = Object.keys(practiceSubjects).map((key, i) => {
+            grid.innerHTML = (typeof practiceSubjects !== 'undefined' ? Object.keys(practiceSubjects) : []).map((key, i) => {
                 const s = practiceSubjects[key];
                 const bank = subjectBanks[key];
                 return `<button class="subject-card${bank ? '' : ' disabled'}" style="animation-delay:${(i * 0.07).toFixed(2)}s" onclick="selectPracticeSubject('${key}')">
@@ -14498,6 +15341,41 @@
             const p = getProfile();
             el.innerHTML = AVATAR_COLORS.map(c => `<div class="avatar-swatch${c === p.color ? ' selected' : ''}" style="background:${c}" onclick="setAvatarColor('${c}')" title="Choose avatar color"></div>`).join('');
         }
+
+        // ============================================================
+        // --- FEATURE: CUSTOMIZABLE AVATARS ---
+        // ============================================================
+        const AVATAR_ICONS = ['fa-user', 'fa-user-astronaut', 'fa-user-ninja', 'fa-user-graduate', 'fa-user-doctor', 'fa-user-secret', 'fa-robot', 'fa-cat', 'fa-dragon', 'fa-frog', 'fa-ghost', 'fa-jedi'];
+
+        function setAvatarIcon(icon) {
+            const p = loadData().profile;
+            p.icon = icon;
+            saveProfile(p.name, p.role, p.color, icon);
+            renderProfile();
+        }
+
+        const originalRenderProfile = renderProfile;
+        renderProfile = function() {
+            originalRenderProfile();
+            const p = loadData().profile;
+            const iconStr = p.icon || 'fa-user';
+
+            // Update the sidebar and hero avatars to show icons instead of initials
+            document.getElementById('sidebarProfileAvatar').innerHTML = `<i class="fa-solid ${iconStr}"></i>`;
+            const heroAv = document.getElementById('heroAvatar');
+            if(heroAv) heroAv.innerHTML = `<i class="fa-solid ${iconStr}"></i>`;
+
+            // Build the icon swatches in the UI
+            const iconWrap = document.getElementById('avatarIcons');
+            if (iconWrap) {
+                iconWrap.innerHTML = AVATAR_ICONS.map(i => `
+                    <div class="avatar-swatch${i === iconStr ? ' selected' : ''}" style="background:var(--surface-subtle); color:var(--text-main); display:flex; align-items:center; justify-content:center; border:1px solid var(--border);" onclick="setAvatarIcon('${i}')" title="Choose avatar">
+                        <i class="fa-solid ${i}"></i>
+                    </div>
+                `).join('');
+            }
+        };
+
         function renderProfile() {
             const p = getProfile();
             const initial = (p.name.trim()[0] || 'S').toUpperCase();
@@ -15071,7 +15949,7 @@
         // ============================================================
         // --- DASHBOARD: PER-SUBJECT "CONTINUE STUDYING" DATA ---
         // ============================================================
-        const dashSubjects = {
+        var dashSubjects = {
             botany:    { label: 'Botany',    emoji: '🌿', goTo: 'goToChapter',
                 ids: ['cellunit', 'overview', 'livingworld', 'morphology'],
                 titles: {
@@ -15107,13 +15985,13 @@
                     'phys-ch5-laws-of-motion': 'Chapter 5: Laws of Motion'
                 } }
         };
-        let activeDashSubject = null;
+        var activeDashSubject = null;
 
         function renderDashSubjectGrid() {
             const grid = document.getElementById('dashSubjectGrid');
             if (!grid) return;
             const data = loadData();
-            grid.innerHTML = Object.keys(dashSubjects).map((key, i) => {
+            grid.innerHTML = (typeof dashSubjects !== 'undefined' ? Object.keys(dashSubjects) : []).map((key, i) => {
                 const s = dashSubjects[key];
                 const done = s.ids.filter(id => data.visited.includes(id)).length;
                 return `<button class="subject-card" data-tilt style="animation-delay:${(i * 0.07).toFixed(2)}s" onclick="selectDashSubject('${key}')">
@@ -15158,7 +16036,7 @@
         const ALL_CHAPTER_TITLES = Object.assign({}, chapterTitles, dashSubjects.zoology.titles, dashSubjects.chemistry.titles, dashSubjects.physics.titles);
         function subjectKeyForId(id) {
             const lookupId = SUBCHAPTER_PARENT[id] || id;
-            for (const key of Object.keys(dashSubjects)) {
+            for (const key of (typeof dashSubjects !== 'undefined' ? Object.keys(dashSubjects) : [])) {
                 if (dashSubjects[key].ids.includes(lookupId)) return key;
             }
             return null;
@@ -15549,7 +16427,7 @@
         // ============================================================
         // --- DASHBOARD ---
         // ============================================================
-        const DASH_TIPS = [
+        var DASH_TIPS = [
             'Retrieval beats re-reading — flip a flashcard and try to recall the definition before you peek.',
             'Interleave chapters: alternate Cell Unit of Life and Cell Cycle questions to strengthen long-term recall.',
             'Use the Mark for Review button in Practice to flag tricky questions and revisit them before your exam.',
@@ -15559,7 +16437,7 @@
             'Bookmark any topic you find confusing so it is one tap away from the Dashboard.',
             'Check your Analytics tab weekly to see whether your accuracy trend is improving.'
         ];
-        const DASH_MOTIV_QUOTES = [
+        var DASH_MOTIV_QUOTES = [
             'Small steps every day beat one giant leap once a month.',
             'You don\'t need to be perfect today — just a little better than yesterday.',
             'Every chapter you revise now is one less surprise on exam day.',
@@ -15567,17 +16445,17 @@
             'Your future self is counting on the effort you put in right now.',
             'Consistency is the real syllabus — show up, even for 10 minutes.'
         ];
-        let dashMotivIdx = 0;
-        let dashMotivTimer = null;
+        var dashMotivIdx = 0;
+        var dashMotivTimer = null;
         function renderMotivTicker() {
             const textEl = document.getElementById('dashMotivText');
             const dotsWrap = document.getElementById('dashMotivDots');
             if (!textEl || !dotsWrap) return;
             if (!dotsWrap.dataset.built) {
-                dotsWrap.innerHTML = DASH_MOTIV_QUOTES.map((_, i) => `<span data-i="${i}"></span>`).join('');
+                dotsWrap.innerHTML = (typeof DASH_MOTIV_QUOTES !== 'undefined' ? DASH_MOTIV_QUOTES : []).map((_, i) => `<span data-i="${i}"></span>`).join('');
                 dotsWrap.dataset.built = '1';
             }
-            textEl.textContent = DASH_MOTIV_QUOTES[dashMotivIdx];
+            textEl.textContent = (typeof DASH_MOTIV_QUOTES !== 'undefined' ? DASH_MOTIV_QUOTES : [])[dashMotivIdx];
             textEl.style.animation = 'none';
             void textEl.offsetWidth;
             textEl.style.animation = 'cardEntrance 0.5s ease';
@@ -15588,13 +16466,13 @@
             renderMotivTicker();
             if (dashMotivTimer) clearInterval(dashMotivTimer);
             dashMotivTimer = setInterval(() => {
-                dashMotivIdx = (dashMotivIdx + 1) % DASH_MOTIV_QUOTES.length;
+                dashMotivIdx = (dashMotivIdx + 1) % (typeof DASH_MOTIV_QUOTES !== 'undefined' ? DASH_MOTIV_QUOTES : []).length;
                 renderMotivTicker();
             }, 6000);
         }
 
         // --- ACHIEVEMENT BADGES ---
-        const DASH_BADGES = [
+        var DASH_BADGES = [
             { key: 'first-step',    icon: 'fa-shoe-prints',      name: 'First Step',      desc: 'Explore 1 chapter',        test: d => d.chaptersDoneAll >= 1 },
             { key: 'five-chapters', icon: 'fa-layer-group',      name: 'Chapter Hopper',   desc: 'Explore 5 chapters',       test: d => d.chaptersDoneAll >= 5 },
             { key: 'streak-3',      icon: 'fa-fire',             name: 'Warming Up',       desc: '3-day streak',             test: d => d.streak >= 3 },
@@ -15612,13 +16490,13 @@
             const grid = document.getElementById('dashBadgesGrid');
             const chip = document.getElementById('dashBadgesChip');
             if (!grid) return;
-            const allSubjectIds = Object.values(dashSubjects).flatMap(s => s.ids);
+            const allSubjectIds = (typeof dashSubjects !== 'undefined' ? Object.values(dashSubjects) : []).flatMap(s => s.ids);
             const ctx = {
                 chaptersDoneAll: data.visited.filter(id => allSubjectIds.includes(id)).length,
                 streak: computeStreak(data.activeDays),
                 quizzesTaken: data.quizHistory.length,
                 cardsReviewed: (() => {
-                    const allCardTerms = Object.values(revisionBanks).flatMap(b => b.data.map(c => c.term));
+                    const allCardTerms = (typeof revisionBanks !== 'undefined' ? Object.values(revisionBanks) : []).flatMap(b => b.data.map(c => c.term));
                     return data.reviewedCards.filter(t => allCardTerms.includes(t)).length;
                 })(),
                 bookmarks: data.bookmarks.length,
@@ -15627,7 +16505,7 @@
             };
             let unlockedCount = 0;
             const unlockedKeys = [];
-            grid.innerHTML = DASH_BADGES.map(b => {
+            grid.innerHTML = (typeof DASH_BADGES !== 'undefined' ? DASH_BADGES : []).map(b => {
                 const unlocked = b.test(ctx);
                 if (unlocked) { unlockedCount++; unlockedKeys.push(b.key); }
                 return `<div class="badge-item ${unlocked ? 'unlocked' : 'locked'}" title="${b.desc}">
@@ -15636,7 +16514,7 @@
                     <div class="badge-desc">${unlocked ? 'Unlocked' : b.desc}</div>
                 </div>`;
             }).join('');
-            if (chip) chip.textContent = unlockedCount + ' / ' + DASH_BADGES.length + ' unlocked';
+            if (chip) chip.textContent = unlockedCount + ' / ' + (typeof DASH_BADGES !== 'undefined' ? DASH_BADGES : []).length + ' unlocked';
             celebrateNewBadges(unlockedKeys);
         }
 
@@ -15657,7 +16535,7 @@
                     const badge = DASH_BADGES.find(b => b.key === k);
                     if (badge) setTimeout(() => showBadgeUnlockToast(badge), i * 900);
                 });
-                fireConfetti(90);
+                fireConfetti(90); playSoundEffect("confetti");
             }
             safeSet('nb_unlocked_badges', JSON.stringify(unlockedKeys));
         }
@@ -15680,8 +16558,8 @@
         }
         initRippleEffect();
 
-        const NEET_EXAM_DATE = '2027-05-02T09:00:00';
-        const XP_LEVELS = [
+        var NEET_EXAM_DATE = '2027-05-02T09:00:00';
+        var XP_LEVELS = [
             { title: 'Beginner',    min: 0 },
             { title: 'Learner',     min: 120 },
             { title: 'Achiever',    min: 280 },
@@ -15694,11 +16572,11 @@
         ];
 
         function computeStudyXp(data) {
-            const allSubjectIds = Object.values(dashSubjects).flatMap(s => s.ids);
+            const allSubjectIds = (typeof dashSubjects !== 'undefined' ? Object.values(dashSubjects) : []).flatMap(s => s.ids);
             const chaptersDoneAll = data.visited.filter(id => allSubjectIds.includes(id)).length;
             const quizzesTaken = data.quizHistory.length;
-            const totalCardCount = Object.values(revisionBanks).reduce((s, b) => s + b.data.length, 0);
-            const allCardTerms = Object.values(revisionBanks).flatMap(b => b.data.map(c => c.term));
+            const totalCardCount = (typeof revisionBanks !== 'undefined' ? Object.values(revisionBanks) : []).reduce((s, b) => s + b.data.length, 0);
+            const allCardTerms = (typeof revisionBanks !== 'undefined' ? Object.values(revisionBanks) : []).flatMap(b => b.data.map(c => c.term));
             const cardsReviewed = data.reviewedCards.filter(t => allCardTerms.includes(t)).length;
             const streak = computeStreak(data.activeDays);
             return (chaptersDoneAll * 25) + (quizzesTaken * 20) + (cardsReviewed * 3) + (data.bookmarks.length * 4) + (streak * 5) + ((data.gamesPlayed || 0) * 8) + (data.bonusXp || 0);
@@ -15707,7 +16585,7 @@
         // ============================================================
         // --- DAILY QUESTS (gamification) ---
         // ============================================================
-        const QUEST_DEFS = [
+        var QUEST_DEFS = [
             { id: 'quiz',    icon: 'fa-pen-to-square', label: 'Attempt 1 quiz',        target: 1, xp: 20 },
             { id: 'game',    icon: 'fa-gamepad',        label: 'Play any 1 game',       target: 1, xp: 20 },
             { id: 'cards',   icon: 'fa-clone',          label: 'Review 5 flashcards',   target: 5, xp: 15 },
@@ -15820,10 +16698,10 @@
             if (!grid) return;
             data = ensureDailyQuestsFresh(data);
             const dq = data.dailyQuests;
-            const doneCount = QUEST_DEFS.filter(q => dq.claimed.includes(q.id)).length;
+            const doneCount = (typeof QUEST_DEFS !== 'undefined' ? QUEST_DEFS : []).filter(q => dq.claimed.includes(q.id)).length;
             const chip = document.getElementById('dashQuestsChip');
-            if (chip) chip.textContent = doneCount + ' / ' + QUEST_DEFS.length + ' done today';
-            grid.innerHTML = QUEST_DEFS.map(q => {
+            if (chip) chip.textContent = doneCount + ' / ' + (typeof QUEST_DEFS !== 'undefined' ? QUEST_DEFS : []).length + ' done today';
+            grid.innerHTML = (typeof QUEST_DEFS !== 'undefined' ? QUEST_DEFS : []).map(q => {
                 const progress = Math.min(dq.progress[q.id] || 0, q.target);
                 const claimed = dq.claimed.includes(q.id);
                 const pct = Math.round((progress / q.target) * 100);
@@ -15864,9 +16742,9 @@
         function renderXpCard(data) {
             const xp = computeStudyXp(data);
             let levelIdx = 0;
-            for (let i = 0; i < XP_LEVELS.length; i++) { if (xp >= XP_LEVELS[i].min) levelIdx = i; }
-            const current = XP_LEVELS[levelIdx];
-            const next = XP_LEVELS[levelIdx + 1];
+            for (let i = 0; i < (typeof XP_LEVELS !== 'undefined' ? XP_LEVELS : []).length; i++) { if (xp >= XP_LEVELS[i].min) levelIdx = i; }
+            const current = (typeof XP_LEVELS !== 'undefined' ? XP_LEVELS : [{name:'Beginner'}])[levelIdx] || {name:'Beginner'};
+            const next = (typeof XP_LEVELS !== 'undefined' ? XP_LEVELS : [])[levelIdx + 1] || null;
             const badgeEl = document.getElementById('dashXpLevelBadge');
             const titleEl = document.getElementById('dashXpTitle');
             const barEl = document.getElementById('dashXpBar');
@@ -15894,7 +16772,7 @@
             if (stored === null) { safeSet('nb_last_xp_level', String(levelNum)); return; }
             if (levelNum > stored) {
                 showLevelUpToast(levelNum, title);
-                fireConfetti(110);
+                fireConfetti(110); playSoundEffect("confetti");
                 safeSet('nb_last_xp_level', String(levelNum));
             } else if (levelNum !== stored) {
                 safeSet('nb_last_xp_level', String(levelNum));
@@ -15921,7 +16799,7 @@
         function renderMasteryList(data) {
             const wrap = document.getElementById('dashMasteryList');
             if (!wrap) return;
-            wrap.innerHTML = Object.keys(dashSubjects).map(key => {
+            wrap.innerHTML = (typeof dashSubjects !== 'undefined' ? Object.keys(dashSubjects) : []).map(key => {
                 const s = dashSubjects[key];
                 const done = s.ids.filter(id => data.visited.includes(id)).length;
                 const pct = Math.round((done / s.ids.length) * 100);
@@ -15965,14 +16843,14 @@
             const best = data.quizHistory.length ? Math.max(...data.quizHistory.map(h => h.score)) : null;
             const bestTotal = data.quizHistory.length ? data.quizHistory[data.quizHistory.length - 1].total : 120;
             const streak = computeStreak(data.activeDays);
-            const totalCardCount = Object.values(revisionBanks).reduce((s, b) => s + b.data.length, 0);
-            const allCardTerms = Object.values(revisionBanks).flatMap(b => b.data.map(c => c.term));
+            const totalCardCount = (typeof revisionBanks !== 'undefined' ? Object.values(revisionBanks) : []).reduce((s, b) => s + b.data.length, 0);
+            const allCardTerms = (typeof revisionBanks !== 'undefined' ? Object.values(revisionBanks) : []).flatMap(b => b.data.map(c => c.term));
             const cardsReviewed = data.reviewedCards.filter(t => allCardTerms.includes(t)).length;
 
             const streakEl = document.getElementById('dashStreak');
             animateNumber(streakEl, streak, { suffix: streak === 1 ? ' day' : ' days', duration: 700 });
 
-            const allSubjectIds = Object.values(dashSubjects).flatMap(s => s.ids);
+            const allSubjectIds = (typeof dashSubjects !== 'undefined' ? Object.values(dashSubjects) : []).flatMap(s => s.ids);
             const chaptersDoneAll = data.visited.filter(id => allSubjectIds.includes(id)).length;
             const pct = Math.round((chaptersDoneAll / allSubjectIds.length) * 100);
             document.getElementById('dashProgressBar').style.width = pct + '%';
@@ -16011,8 +16889,8 @@
             // Tip of the day (deterministic by date)
             const tipEl = document.getElementById('dashTipText');
             if (tipEl) {
-                const dayIndex = Math.floor(Date.now() / 86400000) % DASH_TIPS.length;
-                tipEl.textContent = DASH_TIPS[dayIndex];
+                const dayIndex = Math.floor(Date.now() / 86400000) % (typeof DASH_TIPS !== 'undefined' ? DASH_TIPS : []).length;
+                tipEl.textContent = (typeof DASH_TIPS !== 'undefined' ? DASH_TIPS : [])[dayIndex];
             }
 
             if (activeDashSubject) {
@@ -16199,7 +17077,7 @@
             saveData(data);
             addAccessLogEntry('quiz_completed', 'ok', 'Score: ' + scoreVal + ' / ' + total, getProfile().name);
             bumpDailyQuest('quiz');
-            if (total > 0 && (scoreVal / total) >= 0.8) fireConfetti(70);
+            if (total > 0 && (scoreVal / total) >= 0.8) fireConfetti(70); playSoundEffect("confetti");
         }
 
         // Aggregates every quiz attempt that has subject/topic tagging (older attempts made
@@ -16969,7 +17847,7 @@
             { term: 'Inertial Frame of Reference', def: 'A reference frame that is at rest or moving with constant velocity, in which Newton\'s laws hold true without needing any pseudo force.' },
             { term: 'Non-inertial Frame of Reference', def: 'An accelerating reference frame in which a pseudo force must be added, acting opposite to the frame\'s acceleration, for Newton\'s laws to apply consistently.' }
         ];
-        const revisionBanks = {
+        var revisionBanks = {
             cellunit:  { data: cellUnitCards,  label: 'Chapter 1: Cell — The Unit of Life', short: 'Chapter 1' },
             cellcycle: { data: cellCycleCards, label: 'Chapter 2: Cell Cycle & Cell Division (incl. Meiosis)', short: 'Chapter 2' },
             livingworld: { data: livingWorldCards, label: 'Chapter 3: The Living World', short: 'Chapter 3' },
@@ -17007,7 +17885,7 @@
         function renderRevisionSubjectGrid() {
             const grid = document.getElementById('revisionSubjectGrid');
             if (!grid) return;
-            grid.innerHTML = Object.keys(practiceSubjects).map((key, i) => {
+            grid.innerHTML = (typeof practiceSubjects !== 'undefined' ? Object.keys(practiceSubjects) : []).map((key, i) => {
                 const s = practiceSubjects[key];
                 const keys = revisionSubjectMap[key] || [];
                 const hasData = keys.length > 0;
@@ -17460,6 +18338,218 @@
             const s = sec % 60;
             return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
         }
+
+
+
+        // ============================================================
+        // --- FEATURE: GEMINI AI VOICE CHAT (MOCK) ---
+        // ============================================================
+        let geminiModalOpen = false;
+        let speechRecog = null;
+
+        function toggleGeminiChat() {
+            const backdrop = document.getElementById('geminiBackdrop');
+            const modal = document.getElementById('geminiModal');
+            geminiModalOpen = !geminiModalOpen;
+            if (geminiModalOpen) {
+                backdrop.classList.add('show');
+                modal.style.transform = 'scale(1)';
+                modal.style.opacity = '1';
+                document.getElementById('geminiTextInput').focus();
+            } else {
+                modal.style.transform = 'scale(0.8)';
+                modal.style.opacity = '0';
+                setTimeout(() => backdrop.classList.remove('show'), 300);
+            }
+        }
+
+        function appendGeminiMessage(msg, isUser) {
+            const log = document.getElementById('geminiChatLog');
+            const div = document.createElement('div');
+            div.style.padding = '0.6rem 1rem';
+            div.style.maxWidth = '85%';
+            div.textContent = msg;
+            if (isUser) {
+                div.style.alignSelf = 'flex-end';
+                div.style.background = 'var(--primary)';
+                div.style.color = 'white';
+                div.style.borderRadius = '12px 12px 2px 12px';
+            } else {
+                div.style.alignSelf = 'flex-start';
+                div.style.background = 'var(--surface-subtle)';
+                div.style.color = 'var(--text-main)';
+                div.style.borderRadius = '12px 12px 12px 2px';
+
+                // Read aloud
+                const utterance = new SpeechSynthesisUtterance(msg);
+                utterance.rate = 1.05;
+                window.speechSynthesis.speak(utterance);
+            }
+            log.appendChild(div);
+            log.scrollTop = log.scrollHeight;
+        }
+
+        function getGeminiMockResponse(query) {
+            const q = query.toLowerCase();
+            if (q.includes('mitosis') || q.includes('divide')) return "Mitosis is a single division producing 2 identical diploid cells. It occurs in somatic cells for growth and repair!";
+            if (q.includes('meiosis') || q.includes('gamete')) return "Meiosis produces four genetically unique haploid gametes through two successive divisions (Meiosis I and II).";
+            if (q.includes('newton') || q.includes('law')) return "Newton's First Law is Inertia, the Second is F=ma, and the Third states every action has an equal and opposite reaction.";
+            if (q.includes('mole') || q.includes('avogadro')) return "A mole is 6.022 × 10²³ particles of a substance. You can find moles by dividing mass by molar mass!";
+            if (q.includes('hello') || q.includes('hi')) return "Hello! I'm Gemini, your AI study buddy. What chapter are we revising today?";
+            return "That's a great question! Based on your NEET syllabus, I recommend checking out the Revision Hub or reading the NCERT summary for that topic.";
+        }
+
+        function sendGeminiText() {
+            const input = document.getElementById('geminiTextInput');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            appendGeminiMessage(text, true);
+
+            // Mock thinking delay
+            setTimeout(() => {
+                appendGeminiMessage(getGeminiMockResponse(text), false);
+            }, 800);
+        }
+
+        function startGeminiVoice() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                alert("Voice recognition is not supported in this browser. Try Chrome or Edge!");
+                return;
+            }
+
+            const btn = document.getElementById('geminiMicBtn');
+            btn.style.background = 'var(--danger)';
+            btn.style.color = 'white';
+
+            if (!speechRecog) {
+                speechRecog = new SpeechRecognition();
+                speechRecog.lang = 'en-US';
+                speechRecog.interimResults = false;
+
+                speechRecog.onresult = (e) => {
+                    const text = e.results[0][0].transcript;
+                    appendGeminiMessage(text, true);
+                    setTimeout(() => {
+                        appendGeminiMessage(getGeminiMockResponse(text), false);
+                    }, 800);
+                };
+
+                speechRecog.onend = () => {
+                    btn.style.background = 'var(--primary-light)';
+                    btn.style.color = 'var(--primary)';
+                };
+            }
+
+            speechRecog.start();
+        }
+
+        // ============================================================
+        // --- FEATURE: AMBIENT FOCUS SOUNDS (Web Audio API) ---
+        // ============================================================
+        let audioCtx = null;
+        let currentNoiseNode = null;
+        let currentNoiseGain = null;
+
+        function createNoiseBuffer(type) {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const bufferSize = audioCtx.sampleRate * 2; // 2 seconds
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = buffer.getChannelData(0);
+
+            if (type === 'white') {
+                for (let i = 0; i < bufferSize; i++) {
+                    output[i] = Math.random() * 2 - 1;
+                }
+            } else if (type === 'brown') {
+                let lastOut = 0;
+                for (let i = 0; i < bufferSize; i++) {
+                    let white = Math.random() * 2 - 1;
+                    output[i] = (lastOut + (0.02 * white)) / 1.02;
+                    lastOut = output[i];
+                    output[i] *= 3.5; // (roughly compensate for gain)
+                }
+            }
+            return buffer;
+        }
+
+        function stopFocusSound() {
+            if (currentNoiseNode) {
+                currentNoiseNode.stop();
+                currentNoiseNode.disconnect();
+                currentNoiseNode = null;
+            }
+            if (currentNoiseGain) {
+                currentNoiseGain.disconnect();
+                currentNoiseGain = null;
+            }
+        }
+
+        function playFocusSound(type) {
+            stopFocusSound();
+            if (type === 'none') return;
+
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const buffer = createNoiseBuffer(type);
+            currentNoiseNode = audioCtx.createBufferSource();
+            currentNoiseNode.buffer = buffer;
+            currentNoiseNode.loop = true;
+
+            currentNoiseGain = audioCtx.createGain();
+            // keep the volume low and pleasant
+            currentNoiseGain.gain.value = 0.05;
+
+            // Simple lowpass filter to make it sound more like rain/distant rumble
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = "lowpass";
+            filter.frequency.value = type === 'brown' ? 400 : 1000;
+
+            currentNoiseNode.connect(filter);
+            filter.connect(currentNoiseGain);
+            currentNoiseGain.connect(audioCtx.destination);
+
+            currentNoiseNode.start();
+        }
+
+        function focusSoundToggle() {
+            const select = document.getElementById('focusSoundSelect');
+            const type = select.value;
+            // Only play if the timer is running
+            if (focusTimerRunning && type !== 'none') {
+                playFocusSound(type);
+            } else {
+                stopFocusSound();
+            }
+        }
+
+        // Hook into existing timer functions
+        const originalFocusTimerStart = focusTimerStart;
+        focusTimerStart = function() {
+            originalFocusTimerStart();
+            const type = document.getElementById('focusSoundSelect').value;
+            if (type !== 'none') playFocusSound(type);
+        };
+
+        const originalFocusTimerPause = focusTimerPause;
+        focusTimerPause = function() {
+            originalFocusTimerPause();
+            stopFocusSound();
+        };
+
+        const originalFocusTimerReset = focusTimerReset;
+        focusTimerReset = function() {
+            originalFocusTimerReset();
+            stopFocusSound();
+        };
+
+        const originalFocusTimerComplete = focusTimerComplete;
+        focusTimerComplete = function() {
+            originalFocusTimerComplete();
+            stopFocusSound();
+        };
 
         function focusTimerUpdateDisplay() {
             const displayEl = document.getElementById('focusTimerDisplay');
@@ -18080,6 +19170,62 @@
             document.getElementById('neetModalBackdrop').classList.remove('show');
         }
 
+
+        // ============================================================
+        // --- FEATURE: GAMIFICATION SOUND EFFECTS (Web Audio API) ---
+        // ============================================================
+        let sfxCtx = null;
+
+        function playSoundEffect(type) {
+            if (!sfxCtx) sfxCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (sfxCtx.state === 'suspended') sfxCtx.resume();
+
+            const osc = sfxCtx.createOscillator();
+            const gain = sfxCtx.createGain();
+            osc.connect(gain);
+            gain.connect(sfxCtx.destination);
+
+            const now = sfxCtx.currentTime;
+
+            if (type === 'correct') {
+                // Happy "ding" (Major 3rd interval arpeggio)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                // Soft "buzz"
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(100, now + 0.3);
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.2, now + 0.05);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } else if (type === 'confetti') {
+                // Shimmering trill for confetti/level up
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(880, now);
+                osc.frequency.linearRampToValueAtTime(1760, now + 0.3);
+
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(0.15, now + 0.1);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+
+                osc.start(now);
+                osc.stop(now + 0.5);
+            }
+        }
+
         // ============================================================
         // --- INIT ---
         // ============================================================
@@ -18515,11 +19661,11 @@
                 ssprintLongestStreak = Math.max(ssprintLongestStreak, ssprintStreakVal);
                 const bonus = Math.min(ssprintStreakVal - 1, 5);
                 ssprintScoreVal += 10 + bonus;
-                card.classList.add('flash-correct');
+                card.classList.add('flash-correct'); playSoundEffect("correct");
                 explainEl.textContent = '✅ ' + item.explain + (bonus > 0 ? `  (+${10 + bonus} pts, streak bonus!)` : '  (+10 pts)');
             } else {
                 ssprintStreakVal = 0;
-                card.classList.add('flash-wrong');
+                card.classList.add('flash-wrong'); playSoundEffect("wrong");
                 explainEl.textContent = '❌ Actually ' + item.answer.toUpperCase() + ': ' + item.explain;
             }
 
@@ -18561,7 +19707,7 @@
             results.style.display = 'block';
             document.getElementById('ssprintBest').textContent = String(Math.max(ssprintScoreVal, prevBest));
 
-            if (isNewBest && ssprintScoreVal > 0) fireConfetti(60);
+            if (isNewBest && ssprintScoreVal > 0) fireConfetti(60); playSoundEffect("confetti");
             if (ssprintTotalCount > 0) registerGamePlayed();
         }
 
@@ -18664,7 +19810,7 @@
 
             if (id === correctStage.id) {
                 seqCorrectIndex++;
-                el.classList.add('locked');
+                el.classList.add('locked'); playSoundEffect("correct");
                 const num = document.createElement('div');
                 num.className = 'seq-tile-num';
                 num.textContent = seqCorrectIndex;
@@ -18678,7 +19824,7 @@
                 seqMistakes++;
                 document.getElementById('seqMistakesVal').textContent = String(seqMistakes);
                 seqStartTime -= 3000; // 3s time penalty
-                el.classList.add('wrong-flash');
+                el.classList.add('wrong-flash'); playSoundEffect("wrong");
                 setTimeout(() => el.classList.remove('wrong-flash'), 400);
             }
         }
@@ -18708,7 +19854,7 @@
                 </div>
             `;
             results.style.display = 'block';
-            if (isNewBest) fireConfetti(60);
+            if (isNewBest) fireConfetti(60); playSoundEffect("confetti");
             registerGamePlayed();
         }
 
@@ -18835,7 +19981,7 @@
                 </div>
             `;
             results.style.display = 'block';
-            fireConfetti(isNewBest ? 130 : 80);
+            fireConfetti(isNewBest ? 130 : 80); playSoundEffect("confetti");
             registerGamePlayed();
         }
 
@@ -19106,11 +20252,11 @@
                 cscrSolved++;
                 document.getElementById('cscrScore').textContent = String(cscrScore);
                 document.getElementById('cscrSolved').textContent = String(cscrSolved);
-                card.classList.add('flash-correct');
+                card.classList.add('flash-correct'); playSoundEffect("correct");
                 setTimeout(() => card.classList.remove('flash-correct'), 400);
                 cscrNextWord();
             } else {
-                card.classList.add('flash-wrong');
+                card.classList.add('flash-wrong'); playSoundEffect("wrong");
                 setTimeout(() => card.classList.remove('flash-wrong'), 400);
             }
         }
@@ -19138,7 +20284,7 @@
                 </div>
             `;
             results.style.display = 'block';
-            fireConfetti(isNewBest ? 130 : 80);
+            fireConfetti(isNewBest ? 130 : 80); playSoundEffect("confetti");
             registerGamePlayed();
         }
 
@@ -19260,14 +20406,14 @@
         function wheelAnswer(chosenIdx, correctIdx, btn, grid) {
             Array.from(grid.children).forEach(b => b.disabled = true);
             if (chosenIdx === correctIdx) {
-                btn.classList.add('correct');
+                btn.classList.add('correct'); playSoundEffect("correct");
                 wheelCorrect++;
                 wheelStreak++;
                 const best = parseInt(safeGet('wheelBestStreak') || '0', 10);
                 if (wheelStreak > best) safeSet('wheelBestStreak', String(wheelStreak));
-                fireConfetti(70);
+                fireConfetti(70); playSoundEffect("confetti");
             } else {
-                btn.classList.add('wrong');
+                btn.classList.add('wrong'); playSoundEffect("wrong");
                 grid.children[correctIdx].classList.add('correct');
                 wheelStreak = 0;
             }
@@ -19354,9 +20500,95 @@
             else srsQueue.shift();
             srsRenderNext();
         }
+
+        // ============================================================
+        // --- FEATURE: SWIPEABLE FLASHCARDS ---
+        // ============================================================
+        let srsStartX = 0;
+        let srsCurrentX = 0;
+        let srsIsDragging = false;
+        const srsThreshold = 80;
+
+        function srsInitSwipe() {
+            const cardWrap = document.getElementById('srsCard');
+            if (!cardWrap) return;
+
+            cardWrap.addEventListener('mousedown', srsDragStart);
+            cardWrap.addEventListener('mousemove', srsDragMove);
+            window.addEventListener('mouseup', srsDragEnd);
+
+            cardWrap.addEventListener('touchstart', srsDragStart, {passive: true});
+            cardWrap.addEventListener('touchmove', srsDragMove, {passive: true});
+            window.addEventListener('touchend', srsDragEnd);
+        }
+
+        function srsDragStart(e) {
+            // Only swipe if flipped to back
+            if (!document.getElementById('srsCard').classList.contains('flipped')) return;
+            srsIsDragging = true;
+            srsStartX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            document.getElementById('srsCard').classList.add('swiping');
+        }
+
+        function srsDragMove(e) {
+            if (!srsIsDragging) return;
+            const currentX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+            srsCurrentX = currentX - srsStartX;
+
+            const rotate = srsCurrentX * 0.05;
+            // The card is already flipped (rotateY(180deg)), so we combine transforms
+            document.getElementById('srsCard').style.transform = `translateX(${srsCurrentX}px) rotateY(180deg) rotateZ(${rotate}deg)`;
+
+            // Visual feedback on buttons
+            const hardBtn = document.querySelector('.btn-mark-reviewed[onclick="srsGrade(1)"]');
+            const easyBtn = document.querySelector('.btn-mark-reviewed[onclick="srsGrade(3)"]');
+            if(hardBtn && easyBtn) {
+                if (srsCurrentX < -srsThreshold) {
+                    hardBtn.style.transform = 'scale(1.1)';
+                    easyBtn.style.transform = 'scale(1)';
+                } else if (srsCurrentX > srsThreshold) {
+                    easyBtn.style.transform = 'scale(1.1)';
+                    hardBtn.style.transform = 'scale(1)';
+                } else {
+                    hardBtn.style.transform = 'scale(1)';
+                    easyBtn.style.transform = 'scale(1)';
+                }
+            }
+        }
+
+        function srsDragEnd(e) {
+            if (!srsIsDragging) return;
+            srsIsDragging = false;
+            const card = document.getElementById('srsCard');
+            card.classList.remove('swiping');
+            card.style.transform = ''; // reset to CSS defaults
+
+            const hardBtn = document.querySelector('.btn-mark-reviewed[onclick="srsGrade(1)"]');
+            const easyBtn = document.querySelector('.btn-mark-reviewed[onclick="srsGrade(3)"]');
+            if(hardBtn) hardBtn.style.transform = '';
+            if(easyBtn) easyBtn.style.transform = '';
+
+            if (srsCurrentX < -srsThreshold) {
+                // Swipe Left -> Hard (Grade 1)
+                srsGrade(1);
+            } else if (srsCurrentX > srsThreshold) {
+                // Swipe Right -> Easy (Grade 3)
+                srsGrade(3);
+            }
+            srsCurrentX = 0;
+        }
+
+        // Hook into srsRenderNext
+        const originalSrsRenderNext = srsRenderNext;
+        srsRenderNext = function() {
+            originalSrsRenderNext();
+            document.getElementById('srsCard').style.transform = '';
+        }
+
         function srsInit() {
             if (!document.getElementById('srsCardWrap')) return;
             srsBuildQueue();
+            srsInitSwipe();
             srsReviewedTodayCount = 0;
             srsRenderNext();
         }
@@ -19553,7 +20785,7 @@
 
             if (Object.keys(diagAnswers).length === set.pins.length) {
                 registerGamePlayed();
-                if (correctCount === set.pins.length) fireConfetti(60);
+                if (correctCount === set.pins.length) fireConfetti(60); playSoundEffect("confetti");
             }
         }
         function diagSwitch(key) {
@@ -19726,8 +20958,8 @@
         function dcAnswer(chosenIdx, item, btn, grid) {
             Array.from(grid.children).forEach(b => b.disabled = true);
             const correct = chosenIdx === item.a;
-            if (correct) { btn.classList.add('correct'); fireConfetti(60); }
-            else { btn.classList.add('wrong'); grid.children[item.a].classList.add('correct'); }
+            if (correct) { btn.classList.add('correct'); playSoundEffect("correct"); fireConfetti(60); playSoundEffect("confetti"); }
+            else { btn.classList.add('wrong'); playSoundEffect("wrong"); grid.children[item.a].classList.add('correct'); }
             let state = dcLoadState();
             const today = dcTodayStr();
             state.streak = correct ? (state.streak || 0) + 1 : 0;
@@ -19817,11 +21049,11 @@
         function ffzAnswer(correct, btn, grid) {
             Array.from(grid.children).forEach(b => b.disabled = true);
             if (correct) {
-                btn.classList.add('correct');
+                btn.classList.add('correct'); playSoundEffect("correct");
                 ffzScoreVal += 10 + ffzStreakVal * 2;
                 ffzStreakVal++;
             } else {
-                btn.classList.add('wrong');
+                btn.classList.add('wrong'); playSoundEffect("wrong");
                 ffzStreakVal = 0;
             }
             document.getElementById('ffzScore').textContent = ffzScoreVal;
@@ -19847,7 +21079,7 @@
                 ${isBest ? '<div class="dc-explain" style="font-weight:700; color:var(--success);">New personal best! 🎉</div>' : ''}
                 <button class="btn-action" onclick="startFormulaFrenzy()" style="margin-top:0.6rem;"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
             `;
-            if (isBest) fireConfetti(90);
+            if (isBest) fireConfetti(90); playSoundEffect("confetti");
             registerGamePlayed();
         }
 
@@ -19897,7 +21129,7 @@
             if (cell.disabled) return;
             const isMatch = round.match.includes(symbol);
             if (isMatch) {
-                cell.classList.add('picked-correct');
+                cell.classList.add('picked-correct'); playSoundEffect("correct");
                 cell.disabled = true;
                 ptsScoreVal += 10;
                 ptsFoundCount++;
@@ -19905,10 +21137,10 @@
                 if (ptsFoundCount >= round.match.length) {
                     Array.from(document.getElementById('ptsGrid').children).forEach(c => c.disabled = true);
                     document.getElementById('ptsNextBtn').style.display = 'inline-flex';
-                    fireConfetti(50);
+                    fireConfetti(50); playSoundEffect("confetti");
                 }
             } else {
-                cell.classList.add('picked-wrong');
+                cell.classList.add('picked-wrong'); playSoundEffect("wrong");
                 ptsScoreVal = Math.max(0, ptsScoreVal - 5);
                 setTimeout(() => cell.classList.remove('picked-wrong'), 400);
             }
@@ -20036,7 +21268,7 @@
                 ${isBest ? '<div class="ssprint-new-best">New personal best! 🎉</div>' : ''}
                 <button class="btn-action" onclick="startTrueFalseBlitz()" style="margin-top:0.9rem;"><i class="fa-solid fa-rotate-right"></i> Play Again</button>
             `;
-            if (isBest) fireConfetti(90);
+            if (isBest) fireConfetti(90); playSoundEffect("confetti");
             registerGamePlayed();
         }
 
@@ -20085,7 +21317,7 @@
             hist.push(Math.round(pct * 10) / 10);
             safeSet('readinessHistory', JSON.stringify(hist.slice(-12)));
             rgRenderHistory();
-            if (pct >= 85) fireConfetti(70);
+            if (pct >= 85) fireConfetti(70); playSoundEffect("confetti");
         }
         function rgInit() {
             if (!document.getElementById('rgHistory')) return;
@@ -20134,6 +21366,307 @@
             resultEl.style.color = 'var(--primary)';
             resultEl.textContent = `% Yield = ${pctYield.toFixed(2)}%`;
         }
+
+
+        // ============================================================
+        // --- FEATURE: INTERACTIVE PERIODIC TABLE ---
+        // ============================================================
+
+        const PT_DATA = [
+            { z: 1, sym: 'H', name: 'Hydrogen', mass: '1.008', group: 1, period: 1, block: 's', conf: '1s¹' },
+            { z: 2, sym: 'He', name: 'Helium', mass: '4.0026', group: 18, period: 1, block: 's', conf: '1s²' },
+            { z: 3, sym: 'Li', name: 'Lithium', mass: '6.94', group: 1, period: 2, block: 's', conf: '[He] 2s¹' },
+            { z: 4, sym: 'Be', name: 'Beryllium', mass: '9.0122', group: 2, period: 2, block: 's', conf: '[He] 2s²' },
+            { z: 5, sym: 'B', name: 'Boron', mass: '10.81', group: 13, period: 2, block: 'p', conf: '[He] 2s² 2p¹' },
+            { z: 6, sym: 'C', name: 'Carbon', mass: '12.011', group: 14, period: 2, block: 'p', conf: '[He] 2s² 2p²' },
+            { z: 7, sym: 'N', name: 'Nitrogen', mass: '14.007', group: 15, period: 2, block: 'p', conf: '[He] 2s² 2p³' },
+            { z: 8, sym: 'O', name: 'Oxygen', mass: '15.999', group: 16, period: 2, block: 'p', conf: '[He] 2s² 2p⁴' },
+            { z: 9, sym: 'F', name: 'Fluorine', mass: '18.998', group: 17, period: 2, block: 'p', conf: '[He] 2s² 2p⁵' },
+            { z: 10, sym: 'Ne', name: 'Neon', mass: '20.180', group: 18, period: 2, block: 'p', conf: '[He] 2s² 2p⁶' },
+            { z: 11, sym: 'Na', name: 'Sodium', mass: '22.990', group: 1, period: 3, block: 's', conf: '[Ne] 3s¹' },
+            { z: 12, sym: 'Mg', name: 'Magnesium', mass: '24.305', group: 2, period: 3, block: 's', conf: '[Ne] 3s²' },
+            { z: 13, sym: 'Al', name: 'Aluminium', mass: '26.982', group: 13, period: 3, block: 'p', conf: '[Ne] 3s² 3p¹' },
+            { z: 14, sym: 'Si', name: 'Silicon', mass: '28.085', group: 14, period: 3, block: 'p', conf: '[Ne] 3s² 3p²' },
+            { z: 15, sym: 'P', name: 'Phosphorus', mass: '30.974', group: 15, period: 3, block: 'p', conf: '[Ne] 3s² 3p³' },
+            { z: 16, sym: 'S', name: 'Sulfur', mass: '32.06', group: 16, period: 3, block: 'p', conf: '[Ne] 3s² 3p⁴' },
+            { z: 17, sym: 'Cl', name: 'Chlorine', mass: '35.45', group: 17, period: 3, block: 'p', conf: '[Ne] 3s² 3p⁵' },
+            { z: 18, sym: 'Ar', name: 'Argon', mass: '39.95', group: 18, period: 3, block: 'p', conf: '[Ne] 3s² 3p⁶' },
+            { z: 19, sym: 'K', name: 'Potassium', mass: '39.098', group: 1, period: 4, block: 's', conf: '[Ar] 4s¹' },
+            { z: 20, sym: 'Ca', name: 'Calcium', mass: '40.078', group: 2, period: 4, block: 's', conf: '[Ar] 4s²' },
+            { z: 21, sym: 'Sc', name: 'Scandium', mass: '44.956', group: 3, period: 4, block: 'd', conf: '[Ar] 3d¹ 4s²' },
+            { z: 22, sym: 'Ti', name: 'Titanium', mass: '47.867', group: 4, period: 4, block: 'd', conf: '[Ar] 3d² 4s²' },
+            { z: 23, sym: 'V', name: 'Vanadium', mass: '50.942', group: 5, period: 4, block: 'd', conf: '[Ar] 3d³ 4s²' },
+            { z: 24, sym: 'Cr', name: 'Chromium', mass: '51.996', group: 6, period: 4, block: 'd', conf: '[Ar] 3d⁵ 4s¹' },
+            { z: 25, sym: 'Mn', name: 'Manganese', mass: '54.938', group: 7, period: 4, block: 'd', conf: '[Ar] 3d⁵ 4s²' },
+            { z: 26, sym: 'Fe', name: 'Iron', mass: '55.845', group: 8, period: 4, block: 'd', conf: '[Ar] 3d⁶ 4s²' },
+            { z: 27, sym: 'Co', name: 'Cobalt', mass: '58.933', group: 9, period: 4, block: 'd', conf: '[Ar] 3d⁷ 4s²' },
+            { z: 28, sym: 'Ni', name: 'Nickel', mass: '58.693', group: 10, period: 4, block: 'd', conf: '[Ar] 3d⁸ 4s²' },
+            { z: 29, sym: 'Cu', name: 'Copper', mass: '63.546', group: 11, period: 4, block: 'd', conf: '[Ar] 3d¹⁰ 4s¹' },
+            { z: 30, sym: 'Zn', name: 'Zinc', mass: '65.38', group: 12, period: 4, block: 'd', conf: '[Ar] 3d¹⁰ 4s²' },
+            { z: 31, sym: 'Ga', name: 'Gallium', mass: '69.723', group: 13, period: 4, block: 'p', conf: '[Ar] 3d¹⁰ 4s² 4p¹' },
+            { z: 32, sym: 'Ge', name: 'Germanium', mass: '72.630', group: 14, period: 4, block: 'p', conf: '[Ar] 3d¹⁰ 4s² 4p²' },
+            { z: 33, sym: 'As', name: 'Arsenic', mass: '74.922', group: 15, period: 4, block: 'p', conf: '[Ar] 3d¹⁰ 4s² 4p³' },
+            { z: 34, sym: 'Se', name: 'Selenium', mass: '78.971', group: 16, period: 4, block: 'p', conf: '[Ar] 3d¹⁰ 4s² 4p⁴' },
+            { z: 35, sym: 'Br', name: 'Bromine', mass: '79.904', group: 17, period: 4, block: 'p', conf: '[Ar] 3d¹⁰ 4s² 4p⁵' },
+            { z: 36, sym: 'Kr', name: 'Krypton', mass: '83.798', group: 18, period: 4, block: 'p', conf: '[Ar] 3d¹⁰ 4s² 4p⁶' },
+            // Keeping it brief for the demo, just showing the mechanism
+        ];
+
+        function renderPeriodicTable() {
+            const container = document.getElementById('periodicTableContainer');
+            if(!container || container.children.length > 0) return; // already rendered
+
+            // Build 18x7 grid
+            for(let r=1; r<=7; r++) {
+                for(let c=1; c<=18; c++) {
+                    const el = PT_DATA.find(e => e.group === c && e.period === r);
+                    const div = document.createElement('div');
+
+                    if(el) {
+                        div.className = 'pt-cell';
+                        div.style.cssText = `
+                            background: var(--surface-subtle); border: 1px solid var(--border); border-radius: 4px;
+                            padding: 4px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative;
+                        `;
+
+                        if(el.block === 's') div.style.borderBottom = '3px solid #ef4444';
+                        if(el.block === 'p') div.style.borderBottom = '3px solid #eab308';
+                        if(el.block === 'd') div.style.borderBottom = '3px solid #3b82f6';
+
+                        div.innerHTML = `
+                            <div style="font-size: 0.6rem; color: var(--text-muted); text-align: left;">${el.z}</div>
+                            <div style="font-size: 1.1rem; font-weight: 800; color: var(--text-main); margin: 2px 0;">${el.sym}</div>
+                            <div style="font-size: 0.55rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${el.mass}</div>
+                        `;
+
+                        div.addEventListener('mouseover', () => div.style.transform = 'scale(1.1)');
+                        div.addEventListener('mouseout', () => div.style.transform = 'scale(1)');
+
+                        div.addEventListener('click', () => {
+                            document.getElementById('ptModalSymbol').textContent = el.sym;
+                            document.getElementById('ptModalName').textContent = el.name;
+                            document.getElementById('ptModalNumber').textContent = `Atomic Number: ${el.z}`;
+                            document.getElementById('ptModalMass').textContent = el.mass;
+                            document.getElementById('ptModalGroup').textContent = `Grp ${el.group} / ${el.block}-block`;
+                            document.getElementById('ptModalConfig').textContent = el.conf;
+                            document.getElementById('ptModalBackdrop').classList.add('show');
+                        });
+
+                    } else {
+                        // Empty cell
+                        div.style.visibility = 'hidden';
+                    }
+                    container.appendChild(div);
+                }
+            }
+        }
+
+        // Add to switchView hook
+        const originalSwitchViewPT = switchView;
+        switchView = function(view) {
+            originalSwitchViewPT(view);
+            if(view === 'periodictableui') renderPeriodicTable();
+        };
+
+
+        // ============================================================
+        // --- FEATURE: GLOBAL COMMAND PALETTE (Ctrl/Cmd + K) ---
+        // ============================================================
+        function getCmdItems() { return [
+            // Chapters
+            { type: 'Chapter', title: 'Cell: The Unit of Life', sub: 'Botany Ch 1', icon: 'fa-book-open', action: () => goToChapter('cellunit') },
+            { type: 'Chapter', title: 'Overview of the Cell Cycle', sub: 'Botany Ch 2', icon: 'fa-book-open', action: () => goToChapter('overview') },
+            { type: 'Chapter', title: 'The Living World', sub: 'Botany Ch 3', icon: 'fa-book-open', action: () => goToChapter('livingworld') },
+            { type: 'Chapter', title: 'Morphology of Flowering Plants', sub: 'Botany Ch 4', icon: 'fa-book-open', action: () => goToChapter('morphology') },
+            { type: 'Chapter', title: 'Biological Classification', sub: 'Botany Ch 5', icon: 'fa-book-open', action: () => goToChapter('bioclass') },
+            { type: 'Chapter', title: 'Interphase', sub: 'Botany Ch 2 (Detailed)', icon: 'fa-book-open', action: () => goToChapter('interphase') },
+            { type: 'Chapter', title: 'Mitosis', sub: 'Botany Ch 2 (Detailed)', icon: 'fa-book-open', action: () => goToChapter('mitosis') },
+            { type: 'Chapter', title: 'Meiosis', sub: 'Botany Ch 2 (Detailed)', icon: 'fa-book-open', action: () => goToChapter('meiosis') },
+
+            { type: 'Chapter', title: 'Structural Organisation in Animals', sub: 'Zoology Ch 1', icon: 'fa-book-open', action: () => goToChapter('animaltissues') },
+            { type: 'Chapter', title: 'Biomolecules', sub: 'Zoology Ch 2', icon: 'fa-book-open', action: () => goToChapter('biomolecules') },
+            { type: 'Chapter', title: 'Breathing and Exchange of Gases', sub: 'Zoology Ch 3', icon: 'fa-book-open', action: () => goToChapter('breathing') },
+            { type: 'Chapter', title: 'Body Fluids and Circulation', sub: 'Zoology Ch 4', icon: 'fa-book-open', action: () => goToChapter('circulation') },
+            { type: 'Chapter', title: 'Excretory Products', sub: 'Zoology Ch 5', icon: 'fa-book-open', action: () => goToChapter('excretion') },
+
+            { type: 'Chapter', title: 'Units and Dimensions', sub: 'Physics Ch 1', icon: 'fa-book-open', action: () => goToChapter('units') },
+            { type: 'Chapter', title: 'Vectors', sub: 'Physics Ch 2', icon: 'fa-book-open', action: () => goToChapter('vectors') },
+            { type: 'Chapter', title: 'Motion in a Straight Line', sub: 'Physics Ch 3', icon: 'fa-book-open', action: () => goToChapter('kinematics1d') },
+            { type: 'Chapter', title: 'Motion in a Plane', sub: 'Physics Ch 4', icon: 'fa-book-open', action: () => goToChapter('kinematics2d') },
+            { type: 'Chapter', title: 'Laws of Motion', sub: 'Physics Ch 5', icon: 'fa-book-open', action: () => goToChapter('lawsofmotion') },
+            { type: 'Chapter', title: 'Work, Energy and Power', sub: 'Physics Ch 6', icon: 'fa-book-open', action: () => goToChapter('workenergy') },
+
+            { type: 'Chapter', title: 'Mole Concept & Stoichiometry', sub: 'Chemistry Ch 1', icon: 'fa-book-open', action: () => goToChapter('moleconcept') },
+            { type: 'Chapter', title: 'Structure of Atom', sub: 'Chemistry Ch 2', icon: 'fa-book-open', action: () => goToChapter('chemstructureatom') },
+            { type: 'Chapter', title: 'Classification of Elements & Periodicity', sub: 'Chemistry Ch 3', icon: 'fa-book-open', action: () => goToChapter('chemperiodictable') },
+            { type: 'Chapter', title: 'Chemical Bonding', sub: 'Chemistry Ch 4', icon: 'fa-book-open', action: () => goToChapter('chembonding') },
+            { type: 'Chapter', title: 'Chemical Thermodynamics', sub: 'Chemistry Ch 5', icon: 'fa-book-open', action: () => goToChapter('thermodynamics') },
+            { type: 'Chapter', title: 'Equilibrium', sub: 'Chemistry Ch 6', icon: 'fa-book-open', action: () => goToChapter('equilibrium') },
+            { type: 'Chapter', title: 'Redox Reactions', sub: 'Chemistry Ch 7', icon: 'fa-book-open', action: () => goToChapter('redox') },
+            { type: 'Chapter', title: 'Organic Chemistry — Basic Principles', sub: 'Chemistry Ch 8', icon: 'fa-book-open', action: () => goToChapter('organicbasic') },
+            { type: 'Chapter', title: 'Hydrocarbons', sub: 'Chemistry Ch 9', icon: 'fa-book-open', action: () => goToChapter('hydrocarbons') },
+
+            // Tools & Views
+            { type: 'Tool', title: 'Test Planner', sub: 'Schedule & Syllabus', icon: 'fa-calendar-check', action: () => switchView('planner') },
+            { type: 'Tool', title: 'Dashboard', sub: 'Analytics & Overview', icon: 'fa-chart-pie', action: () => switchView('dashboard') },
+            { type: 'Tool', title: 'Practice Quizzes', sub: 'MCQ Banks', icon: 'fa-dumbbell', action: () => switchView('practice') },
+            { type: 'Tool', title: 'Mock Test', sub: 'Full Length Simulator', icon: 'fa-stopwatch', action: () => switchView('mocktest') },
+            { type: 'Tool', title: 'Revision Hub', sub: 'Flashcards & Mnemonics', icon: 'fa-bolt', action: () => switchView('revision') },
+            { type: 'Tool', title: 'NCERT Library', sub: 'Textbooks', icon: 'fa-book-bookmark', action: () => switchView('ncert') },
+            { type: 'Tool', title: 'Settings', sub: 'Preferences & Themes', icon: 'fa-gear', action: () => switchView('settings') },
+
+            // Games
+            { type: 'Game', title: 'Boss Rush', sub: 'Challenge Mode', icon: 'fa-skull', action: () => { switchView('games'); document.getElementById('bossRushCard').scrollIntoView(); } },
+            { type: 'Game', title: 'Ploidy Calculator', sub: 'Genetics Tool', icon: 'fa-calculator', action: () => { switchView('games'); document.getElementById('ploidyGenerator').scrollIntoView(); } },
+            { type: 'Game', title: 'NCERT Spot the Error', sub: 'Concept Check', icon: 'fa-magnifying-glass', action: () => { switchView('games'); document.getElementById('spotTheError').scrollIntoView(); } },
+            { type: 'Game', title: 'Sort Sprint', sub: 'Mitosis vs Meiosis', icon: 'fa-stopwatch-20', action: () => { switchView('games'); document.getElementById('sortSprint').scrollIntoView(); } },
+            { type: 'Game', title: 'Cell Cycle Sequencer', sub: 'Ordering Game', icon: 'fa-list-ol', action: () => { switchView('games'); document.getElementById('cellSequencer').scrollIntoView(); } },
+            { type: 'Game', title: 'Memory Match', sub: 'Card Game', icon: 'fa-clone', action: () => { switchView('games'); document.getElementById('memoryMatch').scrollIntoView(); } },
+            { type: 'Game', title: 'Live Mitosis', sub: 'Animation', icon: 'fa-film', action: () => { switchView('games'); document.getElementById('manimStage').scrollIntoView(); } },
+            { type: 'Game', title: 'Chromosome Scramble', sub: 'Word Game', icon: 'fa-keyboard', action: () => { switchView('games'); document.getElementById('chromoScramble').scrollIntoView(); } },
+            { type: 'Game', title: 'Wheel of Revision', sub: 'Random Questions', icon: 'fa-dharmachakra', action: () => { switchView('games'); document.getElementById('wheelOfRevision').scrollIntoView(); } },
+            { type: 'Game', title: 'Daily Challenge', sub: 'Streak Builder', icon: 'fa-calendar-day', action: () => { switchView('games'); document.getElementById('dailyChallenge').scrollIntoView(); } },
+            { type: 'Game', title: 'Formula Frenzy', sub: 'Physics Match', icon: 'fa-bolt', action: () => { switchView('games'); document.getElementById('formulaFrenzy').scrollIntoView(); } },
+            { type: 'Game', title: 'Periodic Table Sprint', sub: 'Chemistry Game', icon: 'fa-table-cells', action: () => { switchView('games'); document.getElementById('periodicSprint').scrollIntoView(); } },
+            { type: 'Game', title: 'True or False Blitz', sub: 'Rapid Fire', icon: 'fa-check-double', action: () => { switchView('games'); document.getElementById('trueFalseBlitz').scrollIntoView(); } }
+        ]; }
+
+        var cmdSelectedIndex = 0;
+        var cmdCurrentResults = [];
+
+        function toggleCmdPalette() {
+            const backdrop = document.getElementById('cmdPaletteBackdrop');
+            const input = document.getElementById('cmdPaletteInput');
+            if (backdrop.classList.contains('show')) {
+                backdrop.classList.remove('show');
+                input.blur();
+            } else {
+                backdrop.classList.add('show');
+                input.value = '';
+                cmdSearch('');
+                input.focus();
+            }
+        }
+
+        function cmdSearch(query) {
+            query = query.toLowerCase().trim();
+            const resultsBox = document.getElementById('cmdPaletteResults');
+            resultsBox.innerHTML = '';
+
+            if (!query) {
+                // Show some defaults
+                cmdCurrentResults = (typeof getCmdItems === 'function' ? getCmdItems() : []).slice(0, 5).concat((typeof getCmdItems === 'function' ? getCmdItems() : []).filter(i => i.type === 'Tool').slice(0,3));
+            } else {
+                cmdCurrentResults = (typeof getCmdItems === 'function' ? getCmdItems() : []).filter(i =>
+                    i.title.toLowerCase().includes(query) ||
+                    i.sub.toLowerCase().includes(query) ||
+                    i.type.toLowerCase().includes(query)
+                ).slice(0, 15);
+            }
+
+            if (cmdCurrentResults.length === 0) {
+                resultsBox.innerHTML = '<div style="padding: 1.5rem; text-align: center; color: var(--text-muted);">No results found.</div>';
+                return;
+            }
+
+            cmdSelectedIndex = 0;
+
+            // Group results
+            const groups = {};
+            cmdCurrentResults.forEach(item => {
+                if (!groups[item.type]) groups[item.type] = [];
+                groups[item.type].push(item);
+            });
+
+            let globalIdx = 0;
+            for (const [type, items] of Object.entries(groups)) {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'cmd-result-group';
+                groupDiv.innerHTML = `<div class="cmd-group-label">${type}</div>`;
+
+                items.forEach((item) => {
+                    const idx = globalIdx++; // capture current global index
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `cmd-result-item ${idx === cmdSelectedIndex ? 'selected' : ''}`;
+                    itemDiv.id = `cmd-item-${idx}`;
+                    itemDiv.innerHTML = `
+                        <div class="cmd-result-icon"><i class="fa-solid ${item.icon}"></i></div>
+                        <div>
+                            <div class="cmd-result-title">${item.title}</div>
+                            <div class="cmd-result-sub">${item.sub}</div>
+                        </div>
+                    `;
+                    itemDiv.addEventListener('mouseover', () => {
+                        document.querySelectorAll('.cmd-result-item').forEach(el => el.classList.remove('selected'));
+                        itemDiv.classList.add('selected');
+                        cmdSelectedIndex = idx;
+                    });
+                    itemDiv.addEventListener('click', () => {
+                        toggleCmdPalette();
+                        cmdCurrentResults[idx].action();
+                    });
+                    groupDiv.appendChild(itemDiv);
+                });
+                resultsBox.appendChild(groupDiv);
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            // Check for Ctrl+K or Cmd+K
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                toggleCmdPalette();
+            }
+
+            const backdrop = document.getElementById('cmdPaletteBackdrop');
+            if (backdrop && backdrop.classList.contains('show')) {
+                if (e.key === 'Escape') {
+                    toggleCmdPalette();
+                } else if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (cmdSelectedIndex < cmdCurrentResults.length - 1) {
+                        cmdSelectedIndex++;
+                        updateCmdSelection();
+                    }
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (cmdSelectedIndex > 0) {
+                        cmdSelectedIndex--;
+                        updateCmdSelection();
+                    }
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (cmdCurrentResults[cmdSelectedIndex]) {
+                        toggleCmdPalette();
+                        cmdCurrentResults[cmdSelectedIndex].action();
+                    }
+                }
+            }
+        });
+
+        function updateCmdSelection() {
+            document.querySelectorAll('.cmd-result-item').forEach((el, idx) => {
+                if (idx === cmdSelectedIndex) {
+                    el.classList.add('selected');
+                    el.scrollIntoView({ block: 'nearest' });
+                } else {
+                    el.classList.remove('selected');
+                }
+            });
+        }
+
+        const cmdInput = document.getElementById('cmdPaletteInput');
+        if(cmdInput) {
+            cmdInput.addEventListener('input', (e) => cmdSearch(e.target.value));
+        }
+
+        const cmdBackdrop = document.getElementById('cmdPaletteBackdrop');
+        if(cmdBackdrop) {
+            cmdBackdrop.addEventListener('click', (e) => {
+                if (e.target === cmdBackdrop) toggleCmdPalette();
+            });
+        }
+
 
         function chemCalcPurity() {
             const sampleMass = parseFloat(document.getElementById('chemSampleMassInput').value);
