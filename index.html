@@ -19885,13 +19885,15 @@
             document.getElementById('ptsFoundInfo').textContent = `Found 0 / ${round.match.length}`;
             const grid = document.getElementById('ptsGrid');
             grid.innerHTML = '';
+            const fragment = document.createDocumentFragment();
             PTS_ELEMENTS.forEach(el => {
                 const cell = document.createElement('button');
                 cell.className = 'pts-cell';
                 cell.textContent = el.s;
                 cell.onclick = () => ptsClickCell(el.s, cell, round);
-                grid.appendChild(cell);
+                fragment.appendChild(cell);
             });
+            grid.appendChild(fragment);
         }
         function ptsClickCell(symbol, cell, round) {
             if (cell.disabled) return;
