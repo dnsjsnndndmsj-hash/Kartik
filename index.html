@@ -18716,6 +18716,8 @@
                 ]
             }
         };
+        const NCERT_TOTAL_BOOKS = Object.keys(NCERT_LIBRARY).reduce((sum, s) => sum + NCERT_LIBRARY[s].books.length, 0);
+
         function ncertPdfUrl(code) {
             return 'https://ncert.nic.in/textbook/pdf/' + code + '.pdf';
         }
@@ -18820,8 +18822,7 @@
         function ncertRenderProgress() {
             const bar = document.getElementById('ncertProgressBar');
             if (!bar) return;
-            let total = 0;
-            Object.keys(NCERT_LIBRARY).forEach(s => { total += NCERT_LIBRARY[s].books.length; });
+            const total = NCERT_TOTAL_BOOKS;
             let opened = [];
             try { opened = JSON.parse(safeGet('ncertOpenedBooks')) || []; } catch (e) { opened = []; }
             const openedCount = Math.min(opened.length, total);
