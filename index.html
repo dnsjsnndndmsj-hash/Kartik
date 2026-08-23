@@ -18880,20 +18880,22 @@
             layer.innerHTML = '';
             manimPairEls = [];
             manimSplitEls = [];
+            const fragment = document.createDocumentFragment();
             for (let i = 0; i < 4; i++) {
                 const el = document.createElement('div');
                 el.className = 'manim-chromo-pair';
                 el.innerHTML = `<div class="bar b1" style="background:${MANIM_COLORS[i]};"></div><div class="bar b2" style="background:${MANIM_COLORS[i]};"></div>`;
-                layer.appendChild(el);
+                fragment.appendChild(el);
                 manimPairEls.push(el);
             }
             for (let i = 0; i < 8; i++) {
                 const el = document.createElement('div');
                 el.className = 'manim-chromo-single';
                 el.style.background = MANIM_COLORS[i % 4];
-                layer.appendChild(el);
+                fragment.appendChild(el);
                 manimSplitEls.push(el);
             }
+            layer.appendChild(fragment);
         }
 
         function manimBuildProgress() {
