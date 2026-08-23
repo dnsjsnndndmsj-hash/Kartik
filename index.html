@@ -2067,8 +2067,12 @@
             .planner-nextup { flex-wrap: wrap; }
         }
     </style>
+
+    <!-- 3D Tilt library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.1/vanilla-tilt.min.js"></script>
 </head>
 <body>
+    <canvas id="particle-canvas" style="position:fixed; top:0; left:0; width:100%; height:100%; z-index:-1; pointer-events:none;"></canvas>
 
     <div class="scroll-progress-bar" id="scrollProgressBar"></div>
     <button class="back-to-top-btn" id="backToTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="Back to top" aria-label="Back to top">
@@ -2610,7 +2614,7 @@
                 </div>
             </div>
 
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <h2 class="section-title dash-collapsible-title" onclick="toggleDashContinueStudying()" style="cursor:pointer; display:flex; align-items:center; justify-content:space-between;">
                     <span><i class="fa-solid fa-list-check"></i> Continue Studying</span>
                     <i class="fa-solid fa-chevron-down" id="dashContinueStudyingChevron" style="transition:transform 0.25s ease; font-size:0.85rem; color:var(--text-muted);"></i>
@@ -2745,7 +2749,7 @@
                 <div class="focus-timer-sessions"><i class="fa-solid fa-circle-check" style="color:var(--success);"></i> Focus sessions completed today: <strong id="focusTimerSessionsCount">0</strong></div>
             </div>
 
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Quick Actions</h2>
                 <div class="quick-links">
                     <button class="quick-link-card" onclick="switchView('chapters'); showChapterList();">
@@ -2782,7 +2786,7 @@
                 </header>
 
                 <div class="chapter-grid">
-                    <div class="chapter-card" onclick="zooGoToChapter('zoo-ch1-tissues')">
+                    <div class="chapter-card" data-tilt onclick="zooGoToChapter('zoo-ch1-tissues')">
                         <span class="chapter-card-badge">Ch 1</span>
                         <div class="chapter-card-icon">1</div>
                         <div class="chapter-card-title">Structural Organisation — Animal Tissues</div>
@@ -2793,7 +2797,7 @@
                             <span class="chapter-tag chapter-tag-more">+3</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="zooGoToChapter('zoo-ch2-biomolecules')">
+                    <div class="chapter-card" data-tilt onclick="zooGoToChapter('zoo-ch2-biomolecules')">
                         <span class="chapter-card-badge">Ch 2</span>
                         <div class="chapter-card-icon">2</div>
                         <div class="chapter-card-title">Biomolecules</div>
@@ -2804,7 +2808,7 @@
                             <span class="chapter-tag chapter-tag-more">+4</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="zooGoToChapter('zoo-ch3-breathing')">
+                    <div class="chapter-card" data-tilt onclick="zooGoToChapter('zoo-ch3-breathing')">
                         <span class="chapter-card-badge">Ch 3</span>
                         <div class="chapter-card-icon">3</div>
                         <div class="chapter-card-title">Breathing and Exchange of Gases</div>
@@ -2815,7 +2819,7 @@
                             <span class="chapter-tag chapter-tag-more">+4</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="zooGoToChapter('zoo-ch4-circulation')">
+                    <div class="chapter-card" data-tilt onclick="zooGoToChapter('zoo-ch4-circulation')">
                         <span class="chapter-card-badge">Ch 4</span>
                         <div class="chapter-card-icon">4</div>
                         <div class="chapter-card-title">Body Fluids and Circulation</div>
@@ -2826,7 +2830,7 @@
                             <span class="chapter-tag chapter-tag-more">+4</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="zooGoToChapter('zoo-ch5-excretion')">
+                    <div class="chapter-card" data-tilt onclick="zooGoToChapter('zoo-ch5-excretion')">
                         <span class="chapter-card-badge">Ch 5</span>
                         <div class="chapter-card-icon">5</div>
                         <div class="chapter-card-title">Excretory Products and their Elimination</div>
@@ -2851,7 +2855,7 @@
                 <button onclick="document.getElementById('zoo-neural').scrollIntoView({behavior:'smooth',block:'start'})">Neural Tissue</button>
             </div>
 
-            <section class="section-card" id="zoo-ch1-tissues">
+            <section class="section-card" data-tilt id="zoo-ch1-tissues">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 1</span> Structural Organisation in Animals — Animal Tissues
                     <button class="bookmark-btn" data-id="zoo-ch1-tissues" data-title="Zoology Ch 1: Structural Organisation — Animal Tissues" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -3179,7 +3183,7 @@
                 <button onclick="document.getElementById('zoo-bio-enzymes').scrollIntoView({behavior:'smooth',block:'start'})">Enzymes</button>
             </div>
 
-            <section class="section-card" id="zoo-ch2-biomolecules">
+            <section class="section-card" data-tilt id="zoo-ch2-biomolecules">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 2</span> Biomolecules
                     <button class="bookmark-btn" data-id="zoo-ch2-biomolecules" data-title="Zoology Ch 2: Biomolecules" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -3504,7 +3508,7 @@
                 <button onclick="document.getElementById('zoo-resp-regulation').scrollIntoView({behavior:'smooth',block:'start'})">Regulation &amp; Disorders</button>
             </div>
 
-            <section class="section-card" id="zoo-ch3-breathing">
+            <section class="section-card" data-tilt id="zoo-ch3-breathing">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 3</span> Breathing and Exchange of Gases
                     <button class="bookmark-btn" data-id="zoo-ch3-breathing" data-title="Zoology Ch 3: Breathing and Exchange of Gases" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -3684,7 +3688,7 @@
                 <button onclick="document.getElementById('zoo-circ-double').scrollIntoView({behavior:'smooth',block:'start'})">Double Circulation &amp; Regulation</button>
             </div>
 
-            <section class="section-card" id="zoo-ch4-circulation">
+            <section class="section-card" data-tilt id="zoo-ch4-circulation">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 4</span> Body Fluids and Circulation
                     <button class="bookmark-btn" data-id="zoo-ch4-circulation" data-title="Zoology Ch 4: Body Fluids and Circulation" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -3973,7 +3977,7 @@
                 <button onclick="document.getElementById('zoo-excr-disorders').scrollIntoView({behavior:'smooth',block:'start'})">Disorders</button>
             </div>
 
-            <section class="section-card" id="zoo-ch5-excretion">
+            <section class="section-card" data-tilt id="zoo-ch5-excretion">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 5</span> Excretory Products and their Elimination
                     <button class="bookmark-btn" data-id="zoo-ch5-excretion" data-title="Zoology Ch 5: Excretory Products and their Elimination" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -4260,7 +4264,7 @@
                 </header>
 
                 <div class="chapter-grid">
-                    <div class="chapter-card" onclick="physGoToChapter('phys-ch1-units-dimensions')">
+                    <div class="chapter-card" data-tilt onclick="physGoToChapter('phys-ch1-units-dimensions')">
                         <span class="chapter-card-badge">Ch 1</span>
                         <div class="chapter-card-icon">1</div>
                         <div class="chapter-card-title">Units and Dimensions</div>
@@ -4271,7 +4275,7 @@
                             <span class="chapter-tag chapter-tag-more">+6</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="physGoToChapter('phys-ch2-vectors')">
+                    <div class="chapter-card" data-tilt onclick="physGoToChapter('phys-ch2-vectors')">
                         <span class="chapter-card-badge">Ch 2</span>
                         <div class="chapter-card-icon">2</div>
                         <div class="chapter-card-title">Vectors</div>
@@ -4282,7 +4286,7 @@
                             <span class="chapter-tag chapter-tag-more">+5</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="physGoToChapter('phys-ch3-motion-straight-line')">
+                    <div class="chapter-card" data-tilt onclick="physGoToChapter('phys-ch3-motion-straight-line')">
                         <span class="chapter-card-badge">Ch 3</span>
                         <div class="chapter-card-icon">3</div>
                         <div class="chapter-card-title">Motion in a Straight Line</div>
@@ -4293,7 +4297,7 @@
                             <span class="chapter-tag chapter-tag-more">+6</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="physGoToChapter('phys-ch4-motion-plane')">
+                    <div class="chapter-card" data-tilt onclick="physGoToChapter('phys-ch4-motion-plane')">
                         <span class="chapter-card-badge">Ch 4</span>
                         <div class="chapter-card-icon">4</div>
                         <div class="chapter-card-title">Motion in a Plane</div>
@@ -4304,7 +4308,7 @@
                             <span class="chapter-tag chapter-tag-more">+6</span>
                         </div>
                     </div>
-                    <div class="chapter-card" onclick="physGoToChapter('phys-ch5-laws-of-motion')">
+                    <div class="chapter-card" data-tilt onclick="physGoToChapter('phys-ch5-laws-of-motion')">
                         <span class="chapter-card-badge">Ch 5</span>
                         <div class="chapter-card-icon">5</div>
                         <div class="chapter-card-title">Laws of Motion</div>
@@ -4332,7 +4336,7 @@
                 <button onclick="document.getElementById('phys-screwgauge').scrollIntoView({behavior:'smooth',block:'start'})">Screw Gauge</button>
             </div>
 
-            <section class="section-card" id="phys-ch1-units-dimensions">
+            <section class="section-card" data-tilt id="phys-ch1-units-dimensions">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 1</span> Units and Dimensions
                     <button class="bookmark-btn" data-id="phys-ch1-units-dimensions" data-title="Physics Ch 1: Units and Dimensions" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -4653,7 +4657,7 @@
                 <button onclick="document.getElementById('phys-vec-crossproduct').scrollIntoView({behavior:'smooth',block:'start'})">Cross Product</button>
             </div>
 
-            <section class="section-card" id="phys-ch2-vectors">
+            <section class="section-card" data-tilt id="phys-ch2-vectors">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 2</span> Vectors
                     <button class="bookmark-btn" data-id="phys-ch2-vectors" data-title="Physics Ch 2: Vectors" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -4858,7 +4862,7 @@
                 <button onclick="document.getElementById('phys-msl-freefall').scrollIntoView({behavior:'smooth',block:'start'})">Motion Under Gravity</button>
             </div>
 
-            <section class="section-card" id="phys-ch3-motion-straight-line">
+            <section class="section-card" data-tilt id="phys-ch3-motion-straight-line">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 3</span> Motion in a Straight Line
                     <button class="bookmark-btn" data-id="phys-ch3-motion-straight-line" data-title="Physics Ch 3: Motion in a Straight Line" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -5071,7 +5075,7 @@
                 <button onclick="document.getElementById('phys-mip-relvel2d').scrollIntoView({behavior:'smooth',block:'start'})">Relative Velocity in 2D</button>
             </div>
 
-            <section class="section-card" id="phys-ch4-motion-plane">
+            <section class="section-card" data-tilt id="phys-ch4-motion-plane">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 4</span> Motion in a Plane
                     <button class="bookmark-btn" data-id="phys-ch4-motion-plane" data-title="Physics Ch 4: Motion in a Plane" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -5269,7 +5273,7 @@
                 <button onclick="document.getElementById('phys-lom-circular').scrollIntoView({behavior:'smooth',block:'start'})">Circular Motion Dynamics</button>
             </div>
 
-            <section class="section-card" id="phys-ch5-laws-of-motion">
+            <section class="section-card" data-tilt id="phys-ch5-laws-of-motion">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 5</span> Laws of Motion
                     <button class="bookmark-btn" data-id="phys-ch5-laws-of-motion" data-title="Physics Ch 5: Laws of Motion" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -5467,7 +5471,7 @@
         </header>
 
         <div class="chapter-grid">
-            <div class="chapter-card" onclick="goToChapter('cellunit')">
+            <div class="chapter-card" data-tilt onclick="goToChapter('cellunit')">
                 <span class="chapter-card-badge">Ch 1</span>
                 <div class="chapter-card-icon">1</div>
                 <div class="chapter-card-title">Cell: The Unit of Life</div>
@@ -5479,7 +5483,7 @@
                 </div>
             </div>
 
-            <div class="chapter-card" onclick="goToChapter('overview')">
+            <div class="chapter-card" data-tilt onclick="goToChapter('overview')">
                 <span class="chapter-card-badge">Ch 2</span>
                 <div class="chapter-card-icon">2</div>
                 <div class="chapter-card-title">Overview of the Cell Cycle</div>
@@ -5491,7 +5495,7 @@
                 </div>
             </div>
 
-            <div class="chapter-card" onclick="goToChapter('livingworld')">
+            <div class="chapter-card" data-tilt onclick="goToChapter('livingworld')">
                 <span class="chapter-card-badge">Ch 3</span>
                 <div class="chapter-card-icon">3</div>
                 <div class="chapter-card-title">The Living World</div>
@@ -5503,7 +5507,7 @@
                 </div>
             </div>
 
-            <div class="chapter-card" onclick="goToChapter('morphology')">
+            <div class="chapter-card" data-tilt onclick="goToChapter('morphology')">
                 <span class="chapter-card-badge">Ch 4</span>
                 <div class="chapter-card-icon">4</div>
                 <div class="chapter-card-title">Morphology of Flowering Plants</div>
@@ -5515,7 +5519,7 @@
                 </div>
             </div>
 
-            <div class="chapter-card" onclick="goToChapter('bioclass')">
+            <div class="chapter-card" data-tilt onclick="goToChapter('bioclass')">
                 <span class="chapter-card-badge">Ch 5</span>
                 <div class="chapter-card-icon">5</div>
                 <div class="chapter-card-title">Biological Classification</div>
@@ -5531,7 +5535,7 @@
 
         <div id="chapterGroup-cellunit" class="chapter-group">
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
-        <section id="cellunit" class="section-card">
+        <section id="cellunit" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-shapes"></i> Chapter 1: Cell — The Unit of Life (Class 11 NEET Foundation)
                 <button class="bookmark-btn" data-id="cellunit" data-title="Chapter 1: Cell - The Unit of Life" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -6026,7 +6030,7 @@
             <button onclick="document.getElementById('calculator').scrollIntoView({behavior:'smooth',block:'start'})">Calculator</button>
         </div>
 
-        <section id="overview" class="section-card">
+        <section id="overview" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-circle-nodes"></i> Chapter 2: Overview of the Cell Cycle
                 <button class="bookmark-btn" data-id="overview" data-title="Chapter 2: Overview of the Cell Cycle" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -6105,7 +6109,7 @@
             </div>
         </section>
 
-        <section id="interphase" class="section-card">
+        <section id="interphase" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-hourglass-half"></i> Detailed Breakdown of Interphase
                 <button class="bookmark-btn" data-id="interphase" data-title="Detailed Breakdown of Interphase" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -6176,7 +6180,7 @@
             </div>
         </section>
 
-        <section id="mitosis" class="section-card">
+        <section id="mitosis" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-arrows-split-up-and-left"></i> Mitosis (Equational Division)
                 <button class="bookmark-btn" data-id="mitosis" data-title="Mitosis (Equational Division)" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -6370,7 +6374,7 @@
             </div>
         </section>
 
-        <section id="meiosis" class="section-card">
+        <section id="meiosis" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-shuffle"></i> Meiosis — Reductional & Equational Divisions
                 <button class="bookmark-btn" data-id="meiosis" data-title="Meiosis (Reductional & Equational Divisions)" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -6889,7 +6893,7 @@
             </div>
         </section>
 
-        <section id="calculator" class="section-card">
+        <section id="calculator" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-calculator"></i> Chromosome / DNA Content Calculator
                 <button class="bookmark-btn" data-id="calculator" data-title="Chromosome / DNA Content Calculator" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -6918,7 +6922,7 @@
 
         <div id="chapterGroup-livingworld" class="chapter-group">
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
-        <section id="livingworld" class="section-card">
+        <section id="livingworld" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-leaf"></i> Chapter 3: The Living World
                 <button class="bookmark-btn" data-id="livingworld" data-title="Chapter 3: The Living World" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -7202,7 +7206,7 @@
 
         <div id="chapterGroup-morphology" class="chapter-group">
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
-        <section id="morphology" class="section-card">
+        <section id="morphology" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-seedling"></i> Chapter 4: Morphology of Flowering Plants
                 <button class="bookmark-btn" data-id="morphology" data-title="Chapter 4: Morphology of Flowering Plants" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -7893,7 +7897,7 @@
 
         <div id="chapterGroup-bioclass" class="chapter-group">
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
-        <section id="bioclass" class="section-card">
+        <section id="bioclass" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-sitemap"></i> Chapter 5: Biological Classification
                 <button class="bookmark-btn" data-id="bioclass" data-title="Chapter 5: Biological Classification" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -8217,7 +8221,7 @@
                 </header>
 
                 <div class="chapter-grid">
-                    <div class="chapter-card" onclick="chemGoToChapter('chem-ch1-mole-concept')">
+                    <div class="chapter-card" data-tilt onclick="chemGoToChapter('chem-ch1-mole-concept')">
                         <span class="chapter-card-badge">Ch 1</span>
                         <div class="chapter-card-icon">1</div>
                         <div class="chapter-card-title">Mole Concept &amp; Stoichiometry</div>
@@ -8229,7 +8233,7 @@
                         </div>
                     </div>
 
-                    <div class="chapter-card" onclick="chemGoToChapter('chem-ch2-structure-atom')">
+                    <div class="chapter-card" data-tilt onclick="chemGoToChapter('chem-ch2-structure-atom')">
                         <span class="chapter-card-badge">Ch 2</span>
                         <div class="chapter-card-icon">2</div>
                         <div class="chapter-card-title">Structure of Atom</div>
@@ -8241,7 +8245,7 @@
                         </div>
                     </div>
 
-                    <div class="chapter-card" onclick="chemGoToChapter('chem-ch3-periodic-table')">
+                    <div class="chapter-card" data-tilt onclick="chemGoToChapter('chem-ch3-periodic-table')">
                         <span class="chapter-card-badge">Ch 3</span>
                         <div class="chapter-card-icon">3</div>
                         <div class="chapter-card-title">Classification of Elements &amp; Periodicity</div>
@@ -8253,7 +8257,7 @@
                         </div>
                     </div>
 
-                    <div class="chapter-card" onclick="chemGoToChapter('chem-ch4-chemical-bonding')">
+                    <div class="chapter-card" data-tilt onclick="chemGoToChapter('chem-ch4-chemical-bonding')">
                         <span class="chapter-card-badge">Ch 4</span>
                         <div class="chapter-card-icon">4</div>
                         <div class="chapter-card-title">Chemical Bonding &amp; Molecular Structure</div>
@@ -8280,7 +8284,7 @@
                 <button onclick="document.getElementById('mc-yield').scrollIntoView({behavior:'smooth',block:'start'})">Purity, Yield &amp; Calculator</button>
             </div>
 
-            <section class="section-card" id="chem-ch1-mole-concept">
+            <section class="section-card" data-tilt id="chem-ch1-mole-concept">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 1</span> Some Basic Concepts of Chemistry — Mole Concept &amp; Stoichiometry
                     <button class="bookmark-btn" data-id="chem-ch1-mole-concept" data-title="Chemistry Ch 1: Mole Concept & Stoichiometry" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -8543,7 +8547,7 @@
                 <button onclick="document.getElementById('atom-orbitalshapes').scrollIntoView({behavior:'smooth',block:'start'})">Orbital Shapes</button>
             </div>
 
-            <section class="section-card" id="chem-ch2-structure-atom">
+            <section class="section-card" data-tilt id="chem-ch2-structure-atom">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 2</span> Structure of Atom
                     <button class="bookmark-btn" data-id="chem-ch2-structure-atom" data-title="Chemistry Ch 2: Structure of Atom" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -8904,7 +8908,7 @@
                 <button onclick="document.getElementById('pt-anomalies').scrollIntoView({behavior:'smooth',block:'start'})">Exceptions</button>
             </div>
 
-            <section class="section-card" id="chem-ch3-periodic-table">
+            <section class="section-card" data-tilt id="chem-ch3-periodic-table">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 3</span> Classification of Elements &amp; Periodicity in Properties
                     <button class="bookmark-btn" data-id="chem-ch3-periodic-table" data-title="Chemistry Ch 3: Classification of Elements & Periodicity" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -9060,7 +9064,7 @@
                 <button onclick="document.getElementById('cb-hbond').scrollIntoView({behavior:'smooth',block:'start'})">H-Bonding &amp; Resonance</button>
             </div>
 
-            <section class="section-card" id="chem-ch4-chemical-bonding">
+            <section class="section-card" data-tilt id="chem-ch4-chemical-bonding">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 4</span> Chemical Bonding &amp; Molecular Structure
                     <button class="bookmark-btn" data-id="chem-ch4-chemical-bonding" data-title="Chemistry Ch 4: Chemical Bonding & Molecular Structure" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
@@ -9336,7 +9340,7 @@
         <div id="view-practice" class="app-view">
 
         <!-- Subject select screen -->
-        <section id="practiceSubjectSelect" class="section-card">
+        <section id="practiceSubjectSelect" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-clipboard-question"></i> Practice</h2>
             <p style="margin-bottom: 1.4rem;">Choose a subject to begin. Each question bank includes NCERT-based conceptual questions plus PYQ-style (NEET/board exam pattern) questions.</p>
 
@@ -9363,7 +9367,7 @@
         </section>
 
         <!-- Chapter select panel (shown after a subject is chosen) -->
-        <section id="practiceChapterSelect" class="section-card" style="display:none;">
+        <section id="practiceChapterSelect" class="section-card" data-tilt style="display:none;">
             <button class="subject-back-btn" onclick="backToSubjectSelect()"><i class="fa-solid fa-arrow-left"></i> Change Subject</button>
             <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> <span id="chapterSelectSubjectTitle">Choose a Chapter</span></h2>
             <p style="margin-bottom: 1.4rem;">Pick a chapter to launch its question bank — NCERT-based conceptual questions plus PYQ-style (NEET/board exam pattern) questions.</p>
@@ -9446,7 +9450,7 @@
         </div>
 
         <!-- "Coming soon" screen for subjects with no question bank yet -->
-        <section id="practiceComingSoon" class="section-card" style="display:none;">
+        <section id="practiceComingSoon" class="section-card" data-tilt style="display:none;">
             <button class="subject-back-btn" onclick="backToSubjectSelect()"><i class="fa-solid fa-arrow-left"></i> Change Subject</button>
             <div class="chapter-placeholder">
                 <i class="fa-solid fa-flask-vial"></i>
@@ -9460,7 +9464,7 @@
 
         <!-- ===================== BOOKMARKS VIEW ===================== -->
         <div id="view-bookmarks" class="app-view">
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <h2 class="section-title"><i class="fa-solid fa-bookmark"></i> Your Bookmarks</h2>
                 <p style="margin-bottom:1rem; color:var(--text-muted);">Tap the bookmark icon next to any chapter heading to save it here for quick access.</p>
                 <input type="text" id="bookmarkSearchInput" class="calc-input" placeholder="Search your bookmarks…" oninput="renderBookmarks()" style="margin-bottom:0.9rem;">
@@ -9471,7 +9475,7 @@
 
         <!-- ===================== ANALYTICS VIEW ===================== -->
         <div id="view-analytics" class="app-view">
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <h2 class="section-title"><i class="fa-solid fa-chart-line"></i> Quiz Performance Analytics</h2>
                 <div class="stat-grid" id="analyticsSummary"></div>
                 <div class="table-responsive">
@@ -9479,7 +9483,7 @@
                 </div>
             </div>
 
-            <div class="section-card" id="trendCard" style="display:none;">
+            <div class="section-card" data-tilt id="trendCard" style="display:none;">
                 <h2 class="section-title"><i class="fa-solid fa-wave-square"></i> Score Trend <span style="font-weight:500; font-size:0.8rem; color:var(--text-muted);">(last 10 attempts)</span></h2>
                 <div class="trend-chart-wrap">
                     <svg viewBox="0 0 300 110" preserveAspectRatio="none" class="trend-chart-svg" id="trendChartSvg">
@@ -9496,19 +9500,19 @@
             </div>
 
             <!-- ===== Study Insights: subject accuracy + weak topics + activity heatmap ===== -->
-            <div class="section-card" id="insightsSubjectCard" style="display:none;">
+            <div class="section-card" data-tilt id="insightsSubjectCard" style="display:none;">
                 <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> Accuracy by Subject</h2>
                 <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.6rem;">Based on every quiz you've taken in each subject, most recent chapters included.</p>
                 <div id="insightsSubjectList"></div>
             </div>
 
-            <div class="section-card" id="insightsWeakCard" style="display:none;">
+            <div class="section-card" data-tilt id="insightsWeakCard" style="display:none;">
                 <h2 class="section-title"><i class="fa-solid fa-triangle-exclamation"></i> Weak Topics</h2>
                 <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:0.9rem;">Topics where your accuracy is lowest across all attempts — tap <i class="fa-solid fa-arrow-right"></i> to jump straight into that chapter's quiz.</p>
                 <div id="insightsWeakList"></div>
             </div>
 
-            <div class="section-card" id="insightsHeatmapCard" style="display:none;">
+            <div class="section-card" data-tilt id="insightsHeatmapCard" style="display:none;">
                 <h2 class="section-title"><i class="fa-solid fa-calendar-days"></i> Activity Heatmap <span style="font-weight:500; font-size:0.8rem; color:var(--text-muted);">(last 90 days)</span></h2>
                 <div class="heatmap-wrap" id="insightsHeatmap"></div>
                 <div class="heatmap-legend">
@@ -9521,24 +9525,24 @@
         <div id="view-revision" class="app-view">
 
             <!-- Subject select screen -->
-            <section id="revisionSubjectSelect" class="section-card">
+            <section id="revisionSubjectSelect" class="section-card" data-tilt>
                 <h2 class="section-title"><i class="fa-solid fa-rotate"></i> Revision Hub</h2>
                 <p style="margin-bottom: 1.4rem;">Choose a subject to begin — then pick Flashcards or the Mnemonic Vault.</p>
                 <div class="subject-grid" id="revisionSubjectGrid"></div>
             </section>
 
             <!-- Mode select panel (shown after a subject is chosen: Flashcards or Mnemonic Vault) -->
-            <section id="revisionModeSelect" class="section-card" style="display:none;">
+            <section id="revisionModeSelect" class="section-card" data-tilt style="display:none;">
                 <button class="subject-back-btn" onclick="backToRevisionSubjectSelect()"><i class="fa-solid fa-arrow-left"></i> Change Subject</button>
                 <h2 class="section-title"><i class="fa-solid fa-shapes"></i> <span id="revisionModeSelectTitle">Choose Study Mode</span></h2>
                 <p style="margin-bottom: 1.4rem; color:var(--text-muted);">How do you want to revise this subject?</p>
                 <div class="subject-grid">
-                    <button class="subject-card" onclick="selectRevisionMode('flashcards')">
+                    <button class="subject-card" data-tilt onclick="selectRevisionMode('flashcards')">
                         <div class="subject-card-icon" style="background: var(--gradient-brand);"><i class="fa-solid fa-clone"></i></div>
                         <div class="subject-card-title">Flashcards</div>
                         <div class="subject-card-sub">Quick-fire term &amp; definition recall</div>
                     </button>
-                    <button class="subject-card" onclick="selectRevisionMode('mnemonics')">
+                    <button class="subject-card" data-tilt onclick="selectRevisionMode('mnemonics')">
                         <div class="subject-card-icon" style="background: linear-gradient(135deg,#7c3aed,#db2777);"><i class="fa-solid fa-brain"></i></div>
                         <div class="subject-card-title">Mnemonic Vault</div>
                         <div class="subject-card-sub">Memory tricks, organised by chapter</div>
@@ -9547,7 +9551,7 @@
             </section>
 
             <!-- Chapter select panel (shown after a mode is chosen) -->
-            <section id="revisionChapterSelect" class="section-card" style="display:none;">
+            <section id="revisionChapterSelect" class="section-card" data-tilt style="display:none;">
                 <button class="subject-back-btn" onclick="backToRevisionModeSelect()"><i class="fa-solid fa-arrow-left"></i> Change Mode</button>
                 <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> <span id="revisionChapterSelectTitle">Choose a Chapter</span></h2>
                 <p style="margin-bottom: 1.4rem;" id="revisionChapterSelectHint">Pick a chapter to launch its flashcard deck.</p>
@@ -9555,7 +9559,7 @@
             </section>
 
             <!-- Coming soon panel (shown for subjects without a flashcard deck yet) -->
-            <section id="revisionComingSoon" class="section-card" style="display:none;">
+            <section id="revisionComingSoon" class="section-card" data-tilt style="display:none;">
                 <button class="subject-back-btn" onclick="backToRevisionModeSelect()"><i class="fa-solid fa-arrow-left"></i> Change Mode</button>
                 <div style="text-align:center; padding:2rem 1rem;">
                     <i class="fa-solid fa-clone" style="font-size:2.2rem; color:var(--text-muted); margin-bottom:1rem;"></i>
@@ -9566,7 +9570,7 @@
 
             <!-- Flashcard screen (shown after a chapter is chosen) -->
             <div id="revisionFlashcardSection" style="display:none;">
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <button class="back-to-chapters-btn" onclick="backToRevisionChapterSelect()"><i class="fa-solid fa-arrow-left"></i> Back to Chapters</button>
                 <h2 class="section-title"><i class="fa-solid fa-rotate"></i> Revision Hub — Flashcards</h2>
                 <p style="margin-bottom:1rem; color:var(--text-muted);">Quick-fire recall of high-yield terms. Click a card to flip it.</p>
@@ -9593,7 +9597,7 @@
             </div>
             </div>
 
-            <div class="section-card" id="revisionMnemonicSection" style="display:none;">
+            <div class="section-card" data-tilt id="revisionMnemonicSection" style="display:none;">
                 <button class="back-to-chapters-btn" onclick="backToRevisionChapterSelect()"><i class="fa-solid fa-arrow-left"></i> Back to Chapters</button>
                 <h2 class="section-title"><i class="fa-solid fa-brain"></i> Mnemonic Vault</h2>
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem;">
@@ -9608,7 +9612,7 @@
 
         <!-- ===================== NCERT LIBRARY VIEW ===================== -->
         <div id="view-ncert" class="app-view">
-            <div class="section-card" id="ncertLibraryCard">
+            <div class="section-card" data-tilt id="ncertLibraryCard">
                 <h2 class="section-title"><i class="fa-solid fa-book-bookmark"></i> NCERT Library</h2>
                 <p class="ncert-official-note">
                     Overviews here are original study notes, not the verbatim textbook. For the complete official chapters, visit the
@@ -9632,7 +9636,7 @@
                 <div class="ncert-book-grid" id="ncertBookGrid"></div>
             </div>
 
-            <div class="section-card" id="ncertReaderCard" style="display:none;">
+            <div class="section-card" data-tilt id="ncertReaderCard" style="display:none;">
                 <button class="back-to-chapters-btn" onclick="ncertCloseReader()"><i class="fa-solid fa-arrow-left"></i> Back to NCERT Library</button>
                 <h2 class="section-title" id="ncertReaderTitle"><i class="fa-solid fa-book-open-reader"></i> <span></span></h2>
                 <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:0.4rem;" id="ncertReaderHint">Tap a chapter heading <i class="fa-solid fa-file-pdf" style="color:var(--danger);"></i> to download its official NCERT PDF straight from ncert.nic.in. Select any text in the overview below, then tap a colour to highlight it — highlights save automatically on this device.</p>
@@ -9650,7 +9654,7 @@
             </div>
 
             <!-- Chapter PDF viewer — used for Biology: clicking a chapter opens its official PDF in-app, page by page -->
-            <div class="section-card" id="ncertChapterPdfCard" style="display:none;">
+            <div class="section-card" data-tilt id="ncertChapterPdfCard" style="display:none;">
                 <button class="back-to-chapters-btn" onclick="ncertChapterClose()"><i class="fa-solid fa-arrow-left"></i> Back to chapter list</button>
                 <h2 class="section-title" id="ncertChapterPdfTitle"><i class="fa-solid fa-book-open-reader"></i> <span></span></h2>
 
@@ -9707,7 +9711,7 @@
 
         <!-- ===================== GAMES VIEW ===================== -->
         <div id="view-games" class="app-view">
-        <section id="ploidyGenerator" class="section-card">
+        <section id="ploidyGenerator" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-dna"></i> Ploidy &amp; C-Value Problem Generator
                 <button class="bookmark-btn" data-id="ploidyGenerator" data-title="Ploidy &amp; C-Value Problem Generator" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -9746,7 +9750,7 @@
             </div>
         </section>
 
-        <section id="spotTheError" class="section-card">
+        <section id="spotTheError" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-magnifying-glass"></i> NCERT "Spot the Error" Challenge
                 <button class="bookmark-btn" data-id="spotTheError" data-title="NCERT Spot the Error Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -9799,7 +9803,7 @@
             @media (max-width:520px) { .ssprint-choices { grid-template-columns:1fr; } }
         </style>
 
-        <section id="sortSprint" class="section-card">
+        <section id="sortSprint" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Sort Sprint: Mitosis or Meiosis?
                 <button class="bookmark-btn" data-id="sortSprint" data-title="Sort Sprint: Mitosis or Meiosis?" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -9852,7 +9856,7 @@
             .seq-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
         </style>
 
-        <section id="cellCycleSequencer" class="section-card">
+        <section id="cellCycleSequencer" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-list-ol"></i> Cell Cycle Sequencer
                 <button class="bookmark-btn" data-id="cellCycleSequencer" data-title="Cell Cycle Sequencer" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -9906,7 +9910,7 @@
             .mm-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
         </style>
 
-        <section id="memoryMatch" class="section-card">
+        <section id="memoryMatch" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-clone"></i> Memory Match: Cell Cycle Stages
                 <button class="bookmark-btn" data-id="memoryMatch" data-title="Memory Match: Cell Cycle Stages" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -9958,7 +9962,7 @@
             .manim-dot.done { background:var(--success); }
         </style>
 
-        <section id="mitosisAnimation" class="section-card">
+        <section id="mitosisAnimation" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-play-circle"></i> Live Mitosis Animation
                 <button class="bookmark-btn" data-id="mitosisAnimation" data-title="Live Mitosis Animation" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10017,7 +10021,7 @@
             .cscr-result-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:0.8rem; margin:1.2rem 0; }
         </style>
 
-        <section id="chromoScramble" class="section-card">
+        <section id="chromoScramble" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-keyboard"></i> Chromosome Scramble
                 <button class="bookmark-btn" data-id="chromoScramble" data-title="Chromosome Scramble" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10140,7 +10144,7 @@
             @media (max-width:520px) { .fp-signal-grid { grid-template-columns:1fr; } }
         </style>
 
-        <section id="revisionWheel" class="section-card">
+        <section id="revisionWheel" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-record-vinyl"></i> Wheel of Revision
                 <button class="bookmark-btn" data-id="revisionWheel" data-title="Wheel of Revision" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10188,7 +10192,7 @@
             @media (max-width:520px) { .dc-opts { grid-template-columns:1fr; } }
         </style>
 
-        <section id="dailyChallenge" class="section-card">
+        <section id="dailyChallenge" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-calendar-check"></i> Daily Challenge
                 <button class="bookmark-btn" data-id="dailyChallenge" data-title="Daily Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10229,7 +10233,7 @@
             @media (max-width:480px) { .ffz-opts { grid-template-columns:1fr; } }
         </style>
 
-        <section id="formulaFrenzy" class="section-card">
+        <section id="formulaFrenzy" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-square-root-variable"></i> Formula Frenzy
                 <button class="bookmark-btn" data-id="formulaFrenzy" data-title="Formula Frenzy" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10277,7 +10281,7 @@
             .pts-round-info { font-size:0.85rem; color:var(--text-muted); font-weight:600; }
         </style>
 
-        <section id="periodicSprint" class="section-card">
+        <section id="periodicSprint" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-table-cells"></i> Periodic Table Sprint
                 <button class="bookmark-btn" data-id="periodicSprint" data-title="Periodic Table Sprint" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10318,7 +10322,7 @@
             @media (max-width:520px) { .tfb-choices { grid-template-columns:1fr; } }
         </style>
 
-        <section id="trueFalseBlitz" class="section-card">
+        <section id="trueFalseBlitz" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-scale-balanced"></i> True or False Blitz
                 <button class="bookmark-btn" data-id="trueFalseBlitz" data-title="True or False Blitz" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10368,7 +10372,7 @@
             .rg-history-chip { font-family:'JetBrains Mono', monospace; font-size:0.78rem; font-weight:700; background:var(--surface-subtle); border:1px solid var(--border); border-radius:8px; padding:0.3rem 0.6rem; }
         </style>
 
-        <section id="readinessGauge" class="section-card">
+        <section id="readinessGauge" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-gauge-high"></i> NEET Readiness Gauge
                 <button class="bookmark-btn" data-id="readinessGauge" data-title="NEET Readiness Gauge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10404,7 +10408,7 @@
         </section>
 
         <!-- ===================== FEATURE: SMART REVISION QUEUE (SPACED REPETITION) ===================== -->
-        <section id="srsReviewer" class="section-card">
+        <section id="srsReviewer" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> Smart Revision Queue
                 <button class="bookmark-btn" data-id="srsReviewer" data-title="Smart Revision Queue" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10437,7 +10441,7 @@
         </section>
 
         <!-- ===================== FEATURE: STUDY STREAK HEATMAP ===================== -->
-        <section id="streakHeatmap" class="section-card">
+        <section id="streakHeatmap" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-fire"></i> Study Streak Heatmap
                 <button class="bookmark-btn" data-id="streakHeatmap" data-title="Study Streak Heatmap" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10458,7 +10462,7 @@
         </section>
 
         <!-- ===================== FEATURE: HIGH-YIELD TOPIC TRACKER ===================== -->
-        <section id="pyqTracker" class="section-card">
+        <section id="pyqTracker" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-chart-column"></i> High-Yield Topic Tracker
                 <button class="bookmark-btn" data-id="pyqTracker" data-title="High-Yield Topic Tracker" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10471,7 +10475,7 @@
         </section>
 
         <!-- ===================== FEATURE: DIAGRAM LABELING CHALLENGE ===================== -->
-        <section id="diagramLabel" class="section-card">
+        <section id="diagramLabel" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> Diagram Labeling Challenge
                 <button class="bookmark-btn" data-id="diagramLabel" data-title="Diagram Labeling Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10494,7 +10498,7 @@
         </section>
 
         <!-- ===================== FEATURE: DOUBT SOLVER ===================== -->
-        <section id="doubtSolver" class="section-card">
+        <section id="doubtSolver" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-magnifying-glass-plus"></i> Doubt Solver
                 <button class="bookmark-btn" data-id="doubtSolver" data-title="Doubt Solver" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
@@ -10516,7 +10520,7 @@
         <!-- ===================== SETTINGS VIEW ===================== -->
         <div id="view-settings" class="app-view">
             <!-- ===== MY PROFILE (advanced) ===== -->
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <h2 class="section-title"><i class="fa-solid fa-user"></i> My Profile</h2>
 
                 <div class="profile-hero">
@@ -10547,7 +10551,7 @@
             </div>
 
             <!-- ===== DEVICE FINGERPRINT SCANNER ===== -->
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <h2 class="section-title"><i class="fa-solid fa-fingerprint"></i> Device Fingerprint</h2>
                 <p style="margin-bottom:1rem;">Builds an ID from stable signals in your browser and hardware — canvas rendering, WebGL renderer, screen, timezone, CPU cores and more — so this device can still be recognised even after site data is cleared (unlike the random device ID above, which resets). Runs entirely in your browser; nothing is sent anywhere.</p>
 
@@ -10565,7 +10569,7 @@
                 </div>
             </div>
 
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <h2 class="section-title"><i class="fa-solid fa-gear"></i> Settings</h2>
 
                 <div class="settings-row">
@@ -10602,7 +10606,7 @@
             </div>
 
             <!-- ===== OWNER SECURITY (LOCKED BEHIND OWNER PASSWORD) ===== -->
-            <div class="section-card">
+            <div class="section-card" data-tilt>
                 <div class="owner-hero">
                     <div class="owner-hero-orb o1"></div>
                     <div class="owner-hero-orb o2"></div>
@@ -13895,7 +13899,7 @@
             const bankSet = currentBanks();
             grid.innerHTML = Object.keys(bankSet).map((key, i) => {
                 const bank = bankSet[key];
-                return `<button class="quiz-chapter-card" style="animation-delay:${(i * 0.08).toFixed(2)}s" onclick="openTopicSelect('${key}')">
+                return `<button class="quiz-chapter-card" data-tilt style="animation-delay:${(i * 0.08).toFixed(2)}s" onclick="openTopicSelect('${key}')">
                     <div class="quiz-chapter-num">CH ${String(i + 1).padStart(2, '0')}</div>
                     <div class="quiz-chapter-icon">${i + 1}</div>
                     <div class="quiz-chapter-title">${bank.label.replace(/^Chapter \d+:\s*/, '')}</div>
@@ -15112,7 +15116,7 @@
             grid.innerHTML = Object.keys(dashSubjects).map((key, i) => {
                 const s = dashSubjects[key];
                 const done = s.ids.filter(id => data.visited.includes(id)).length;
-                return `<button class="subject-card" style="animation-delay:${(i * 0.07).toFixed(2)}s" onclick="selectDashSubject('${key}')">
+                return `<button class="subject-card" data-tilt style="animation-delay:${(i * 0.07).toFixed(2)}s" onclick="selectDashSubject('${key}')">
                     <div class="subject-card-icon icon-${key}">${s.emoji}</div>
                     <div class="subject-card-title">${s.label}</div>
                     <div class="subject-card-sub">${done} / ${s.ids.length} chapters explored</div>
@@ -17030,7 +17034,7 @@
                     : `<span class="quiz-chapter-tag"><i class="fa-solid fa-clone"></i> ${bank.data.length} cards</span>`;
                 const cta = isMnemonics ? 'Open Vault' : 'Start Revising';
                 const handler = isMnemonics ? `startRevisionMnemonicChapter('${key}')` : `startRevisionChapter('${key}')`;
-                return `<button class="quiz-chapter-card" style="animation-delay:${(i * 0.08).toFixed(2)}s" onclick="${handler}">
+                return `<button class="quiz-chapter-card" data-tilt style="animation-delay:${(i * 0.08).toFixed(2)}s" onclick="${handler}">
                     <div class="quiz-chapter-num">CH ${String(i + 1).padStart(2, '0')}</div>
                     <div class="quiz-chapter-icon">${i + 1}</div>
                     <div class="quiz-chapter-title">${bank.label.replace(/^Chapter \d+:\s*/, '')}</div>
@@ -20144,6 +20148,116 @@
             resultEl.style.color = 'var(--primary)';
             resultEl.textContent = `Pure (reacting) mass = ${pureMass.toFixed(3)} g`;
         }
+    </script>
+
+    <!-- Particle Network Background Script -->
+    <script>
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let numParticles = 80;
+        let mouse = { x: null, y: null };
+        let maxDistance = 150;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Adjust particle count based on screen size
+            numParticles = Math.floor((canvas.width * canvas.height) / 15000);
+            initParticles();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+        window.addEventListener('mouseout', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 1.5;
+                this.vy = (Math.random() - 0.5) * 1.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) this.vx = -this.vx;
+                if (this.y < 0 || this.y > canvas.height) this.vy = -this.vy;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0d9488';
+                ctx.globalAlpha = 0.5;
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < numParticles; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function connectParticles() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < maxDistance) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        // opacity based on distance
+                        let opacity = 1 - (dist / maxDistance);
+                        ctx.strokeStyle = `rgba(13, 148, 136, ${opacity * 0.4})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+
+                // Connection with mouse
+                if (mouse.x != null && mouse.y != null) {
+                    let dx = particles[i].x - mouse.x;
+                    let dy = particles[i].y - mouse.y;
+                    let dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < maxDistance * 1.2) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        let opacity = 1 - (dist / (maxDistance * 1.2));
+                        ctx.strokeStyle = `rgba(13, 148, 136, ${opacity * 0.6})`;
+                        ctx.lineWidth = 1.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+            }
+            connectParticles();
+            requestAnimationFrame(animateParticles);
+        }
+
+        resizeCanvas();
+        animateParticles();
     </script>
 
     <!-- PWA: register service worker for offline/installable support -->
