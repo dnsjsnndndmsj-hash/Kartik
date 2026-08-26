@@ -1,0 +1,3 @@
+## 2024-08-26 - Add ARIA Labels to Interactive Icon-Only Buttons
+**Learning:** Found several icon-only buttons (like a floating action button for an AI tutor, a microphone button, and a sidebar toggle button) that lacked `aria-label` or `title` attributes. This is a common pattern that makes navigation difficult for screen reader users as they receive no context on the button's action.
+**Action:** Always verify that buttons or inputs that rely purely on icons or visual context have descriptive `aria-label` and `title` attributes so that their function is explicitly conveyed to assistive technologies.
