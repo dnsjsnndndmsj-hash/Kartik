@@ -1,0 +1,3 @@
+## 2024-05-14 - Missing ARIA labels on overlay components
+**Learning:** Custom overlay and fixed-position UI components in this app (like the AI Tutor FAB, modal close buttons, and lock screen inputs) consistently lack `aria-label` attributes for icon-only controls.
+**Action:** Always verify accessibility on floating, non-standard layout elements, particularly those built with icon-only buttons or custom input fields, ensuring they are properly labeled for screen readers.
