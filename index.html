@@ -15498,7 +15498,7 @@
         // the same even if the visitor clears site storage — useful for the owner's
         // access log to recognise a returning device. Runs fully client-side;
         // nothing is transmitted anywhere.
-        let _fingerprintCache = null;
+        var _fingerprintCache = null;
         function fpHashString(str) {
             // Two independent 32-bit FNV-1a passes (different seeds), chained into one
             // hex digest. Not cryptographic — just enough entropy-mixing for a device
@@ -15646,9 +15646,16 @@
             ncert_pdf_viewed: 'NCERT chapter PDF opened', ncert_pdf_downloaded: 'NCERT chapter PDF downloaded'
         };
         // Security/account events vs day-to-day study activity — used to filter the History view
-        const LOG_SECURITY_TYPES = new Set(['site_access', 'owner_access', 'profile_update', 'access_code_changed', 'owner_password_changed', 'maintenance_toggle', 'backup_export', 'backup_import']);
-        function logCategory(type) { return LOG_SECURITY_TYPES.has(type) ? 'security' : 'activity'; }
-        let historyFilter = 'all';
+        var LOG_SECURITY_TYPES = new Set(['site_access', 'owner_access', 'profile_update', 'access_code_changed', 'owner_password_changed', 'maintenance_toggle', 'backup_export', 'backup_import']);
+
+        function logCategory(type) {
+            if (typeof LOG_SECURITY_TYPES !== 'undefined' && LOG_SECURITY_TYPES && LOG_SECURITY_TYPES.has) {
+                return LOG_SECURITY_TYPES.has(type) ? 'security' : 'activity';
+            }
+            return 'activity';
+        }
+
+        var historyFilter = 'all';
         function setHistoryFilter(filter) {
             historyFilter = filter;
             document.querySelectorAll('.history-filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === filter));
@@ -16094,7 +16101,14 @@
             }
             return null;
         }
-        function titleForId(id) { return ALL_CHAPTER_TITLES[id] || id; }
+
+        function titleForId(id) {
+            if (typeof ALL_CHAPTER_TITLES !== 'undefined' && ALL_CHAPTER_TITLES) {
+                return ALL_CHAPTER_TITLES[id] || id;
+            }
+            return id;
+        }
+
 
         function loadData() {
             const defaults = { visited: [], bookmarks: [], quizHistory: [], reviewedCards: [], activeDays: [], lastVisited: null, bonusXp: 0, dailyQuests: { date: '', progress: {}, claimed: [] }, gamesPlayed: 0 };
@@ -16659,24 +16673,31 @@
         function bumpDailyQuest(type, amount) {
             amount = amount || 1;
             let data = loadData();
-            data = ensureDailyQuestsFresh(data);
-            const dq = data.dailyQuests;
+            if (typeof ensureDailyQuestsFresh !== 'undefined') {
+                data = ensureDailyQuestsFresh(data);
+            }
+            const dq = data.dailyQuests || { progress: {}, claimed: [] };
             dq.progress[type] = (dq.progress[type] || 0) + amount;
             let newlyClaimed = null;
-            QUEST_DEFS.forEach(q => {
-                if (q.id === type && !dq.claimed.includes(q.id) && dq.progress[type] >= q.target) {
-                    dq.claimed.push(q.id);
-                    data.bonusXp = (data.bonusXp || 0) + q.xp;
-                    newlyClaimed = q;
-                }
-            });
+            if (typeof QUEST_DEFS !== 'undefined' && QUEST_DEFS && Array.isArray(QUEST_DEFS)) {
+                QUEST_DEFS.forEach(q => {
+                    if (q.id === type && !dq.claimed.includes(q.id) && dq.progress[type] >= q.target) {
+                        dq.claimed.push(q.id);
+                        data.bonusXp = (data.bonusXp || 0) + q.xp;
+                        newlyClaimed = q;
+                    }
+                });
+            }
             saveData(data);
             if (document.getElementById('view-dashboard') && document.getElementById('view-dashboard').classList.contains('active')) {
-                renderDailyQuests(data);
-                renderXpCard(data);
-                renderAchievements(data);
+                if (typeof renderDailyQuests !== 'undefined') renderDailyQuests(data);
+                if (typeof renderXpCard !== 'undefined') renderXpCard(data);
+                if (typeof renderAchievements !== 'undefined') renderAchievements(data);
+                if (typeof renderDashboard !== 'undefined') renderDashboard();
             }
-            if (newlyClaimed) showQuestToast(newlyClaimed);
+            if (newlyClaimed) {
+                if (typeof showQuestToast !== 'undefined') showQuestToast(newlyClaimed);
+            }
             return data;
         }
         function showQuestToast(quest) {
