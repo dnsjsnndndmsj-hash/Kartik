@@ -2176,7 +2176,7 @@
 
 
     <!-- Gemini AI Voice Chat -->
-    <button id="geminiFab" onclick="toggleGeminiChat()" style="position: fixed; bottom: 22px; left: 22px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; border: none; box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5); z-index: 1100; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
+    <button id="geminiFab" aria-label="Open Gemini chat" onclick="toggleGeminiChat()" style="position: fixed; bottom: 22px; left: 22px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; border: none; box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5); z-index: 1100; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
         <i class="fa-solid fa-sparkles"></i>
     </button>
 
@@ -2186,13 +2186,13 @@
                 <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
                     <i class="fa-solid fa-sparkles"></i> Gemini AI Tutor
                 </div>
-                <button onclick="toggleGeminiChat()" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.8;"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="toggleGeminiChat()" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.8;" aria-label="Close Gemini chat"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="geminiChatLog" style="padding: 1rem; height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--surface); color: var(--text-main); font-size: 0.9rem;">
                 <div style="align-self: flex-start; background: var(--surface-subtle); padding: 0.6rem 1rem; border-radius: 12px 12px 12px 2px; max-width: 85%;">Hi! I'm your AI tutor. Click the mic and ask me a biology, chemistry, or physics question!</div>
             </div>
             <div style="padding: 0.8rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; background: var(--surface);">
-                <button id="geminiMicBtn" onclick="startGeminiVoice()" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: var(--primary); border: none; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-microphone"></i></button>
+                <button id="geminiMicBtn" onclick="startGeminiVoice()" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: var(--primary); border: none; cursor: pointer; transition: all 0.2s;" aria-label="Start voice input"><i class="fa-solid fa-microphone"></i></button>
                 <input type="text" id="geminiTextInput" placeholder="Or type a question..." style="flex: 1; border: 1px solid var(--border); border-radius: 20px; padding: 0 1rem; background: var(--surface-subtle); color: var(--text-main); outline: none;" onkeydown="if(event.key==='Enter') sendGeminiText()">
             </div>
         </div>
@@ -9486,7 +9486,7 @@
             <!-- Element Info Modal -->
             <div class="cmd-palette-backdrop" id="ptModalBackdrop" style="align-items: center;">
                 <div class="section-card" style="max-width: 400px; width: 100%; margin: 0; position: relative;">
-                    <button class="neet-modal-close" onclick="document.getElementById('ptModalBackdrop').classList.remove('show')"><i class="fa-solid fa-xmark"></i></button>
+                    <button class="neet-modal-close" onclick="document.getElementById('ptModalBackdrop').classList.remove('show')" aria-label="Close periodic table modal"><i class="fa-solid fa-xmark"></i></button>
                     <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem;">
                         <div id="ptModalSymbol" style="width: 80px; height: 80px; border-radius: 12px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800;"></div>
                         <div>
@@ -17045,7 +17045,7 @@
                     <div><i class="fa-solid fa-bookmark"></i> ${b.title}<span class="bookmark-cat-tag">${b.cat}</span></div>
                     <div>
                         <button class="btn-action" style="padding:0.5rem 1rem; font-size:0.85rem;" onclick="openBookmark('${b.id}')">Open</button>
-                        <button class="btn-ghost-remove" onclick="removeBookmark('${b.id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-ghost-remove" onclick="removeBookmark('${b.id}')" aria-label="Remove bookmark"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>`).join('');
         }
@@ -17219,7 +17219,7 @@
                             <div class="weak-topic-sub">${r.correct} / ${r.total} correct across your attempts</div>
                         </div>
                         <div class="weak-topic-pct">${Math.round(r.pct)}%</div>
-                        ${r.chapterKey ? `<button class="weak-topic-go" title="Practice this chapter" onclick="goToWeakTopic('${r.subject}','${r.chapterKey}')"><i class="fa-solid fa-arrow-right"></i></button>` : ''}
+                        ${r.chapterKey ? `<button class="weak-topic-go" title="Practice this chapter" onclick="goToWeakTopic('${r.subject}','${r.chapterKey}')" aria-label="Practice weak topic"><i class="fa-solid fa-arrow-right"></i></button>` : ''}
                     </div>`).join('');
             } else {
                 weakCard.style.display = 'none';
@@ -20873,7 +20873,7 @@
             box.innerHTML = list.map(d => `
                 <div class="doubt-journal-item">
                     <span>${escapeHtml(d.text)} <span style="color:var(--text-muted); font-size:0.75rem;">(${d.date})</span></span>
-                    <button onclick="doubtRemoveFromJournal(${d.id})" title="Remove"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="doubtRemoveFromJournal(${d.id})" title="Remove" aria-label="Remove doubt"><i class="fa-solid fa-xmark"></i></button>
                 </div>`).join('');
         }
         function doubtInit() {
