@@ -1,0 +1,3 @@
+## 2024-05-24 - Missing ARIA Labels on Icon Buttons
+**Learning:** Many interactive icon-only buttons (like bookmarks and remove buttons) lacked proper ARIA labels, making them inaccessible to screen readers.
+**Action:** Added `aria-label` attributes to `.bookmark-btn`, `.btn-ghost-remove`, and `.weak-topic-go` classes across the application to improve screen reader accessibility without changing visual design or adding custom CSS.
