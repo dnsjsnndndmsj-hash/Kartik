@@ -110,6 +110,15 @@
         .app-view.view-anim > *:nth-child(n+7) { animation-delay: 0.3s; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        /* --- GLOBAL FOCUS STATES --- */
+        *:focus:not(:focus-visible) { outline: none; }
+        *:focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
         html { scroll-behavior: smooth; }
         body {
             font-family: 'Inter', sans-serif;
@@ -2984,7 +2993,7 @@
 
             <section class="section-card" data-tilt id="zoo-ch1-tissues">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 1</span> Structural Organisation in Animals — Animal Tissues
-                    <button class="bookmark-btn" data-id="zoo-ch1-tissues" data-title="Zoology Ch 1: Structural Organisation — Animal Tissues" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="zoo-ch1-tissues" data-title="Zoology Ch 1: Structural Organisation — Animal Tissues" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>In multicellular animals, cells rarely act alone. Groups of similar cells that perform a common function are organised together into a <span class="neet-term">tissue</span>. Different tissues combine to form <strong>organs</strong>, organs combine into <strong>organ systems</strong>, and organ systems together make up the complete <strong>organism</strong>. Animal tissues are broadly grouped into four fundamental types: Epithelial, Connective, Muscular and Neural.</p>
 
@@ -3312,7 +3321,7 @@
 
             <section class="section-card" data-tilt id="zoo-ch2-biomolecules">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 2</span> Biomolecules
-                    <button class="bookmark-btn" data-id="zoo-ch2-biomolecules" data-title="Zoology Ch 2: Biomolecules" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="zoo-ch2-biomolecules" data-title="Zoology Ch 2: Biomolecules" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Every living cell is a self-contained chemical factory. If you analyse the chemical composition of a cell, you will find both <span class="neet-term">inorganic constituents</span> (water, mineral ions, gases) and <span class="neet-term">organic constituents</span> — the true <strong>biomolecules</strong>: carbohydrates, proteins, lipids and nucleic acids. This chapter looks at the structure, classification and biological role of each class, and how small building-block molecules polymerise into the giant macromolecules of life. Biomolecular analysis is the foundation of biochemistry, and questions from this chapter appear almost every year in NEET — usually testing exact numbers (bond angles, number of H-bonds, number of amino acids), classic exceptions, and NCERT-line definitions, so precision matters more than in most other chapters.</p>
                     <div class="callout" style="margin-bottom:0.8rem;"><strong>Big picture:</strong> All four major biomolecule classes follow the same architectural logic — a small, repeating <strong>monomer</strong> unit is joined to identical or similar units by a specific <strong>covalent bond</strong>, releasing a water molecule each time (dehydration/condensation). The reverse reaction — <strong>hydrolysis</strong> — adds water back and breaks the polymer down, which is exactly what digestive enzymes do. Keep this monomer → bond → polymer → hydrolysis framework in mind for every section below.</div>
@@ -3637,7 +3646,7 @@
 
             <section class="section-card" data-tilt id="zoo-ch3-breathing">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 3</span> Breathing and Exchange of Gases
-                    <button class="bookmark-btn" data-id="zoo-ch3-breathing" data-title="Zoology Ch 3: Breathing and Exchange of Gases" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="zoo-ch3-breathing" data-title="Zoology Ch 3: Breathing and Exchange of Gases" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Every living cell needs a continuous supply of O₂ to oxidise food and release energy, and must get rid of the CO₂ produced. <span class="neet-term">Breathing</span> (respiration in the physical sense) is the mechanical process of taking in atmospheric air rich in O₂ and giving out CO₂-rich alveolar air. The energy-releasing biochemical process inside cells is <strong>cellular respiration</strong> — a separate topic. This chapter covers respiratory organs, the human respiratory system, breathing mechanics, gas exchange/transport, and their regulation.</p>
 
@@ -3817,7 +3826,7 @@
 
             <section class="section-card" data-tilt id="zoo-ch4-circulation">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 4</span> Body Fluids and Circulation
-                    <button class="bookmark-btn" data-id="zoo-ch4-circulation" data-title="Zoology Ch 4: Body Fluids and Circulation" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="zoo-ch4-circulation" data-title="Zoology Ch 4: Body Fluids and Circulation" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Multicellular animals need an efficient transport system to carry O₂, nutrients, hormones, wastes and heat to and from every cell — simple diffusion is far too slow to serve cells lying deep inside a large body. In humans this job is done by two body fluids — <span class="neet-term">blood</span> and <span class="neet-term">lymph</span> — driven around the body by a muscular pump, the heart, working within a closed system of vessels. This chapter covers blood composition, plasma proteins, blood groups, the clotting cascade, lymph and the lymphatic system, heart structure and conduction, the cardiac cycle with ECG, and double circulation with its regulation and disorders — all high-yield NEET areas.</p>
 
@@ -4106,7 +4115,7 @@
 
             <section class="section-card" data-tilt id="zoo-ch5-excretion">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 5</span> Excretory Products and their Elimination
-                    <button class="bookmark-btn" data-id="zoo-ch5-excretion" data-title="Zoology Ch 5: Excretory Products and their Elimination" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="zoo-ch5-excretion" data-title="Zoology Ch 5: Excretory Products and their Elimination" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Metabolic activity constantly generates waste — chiefly nitrogenous compounds from the breakdown (catabolism) of proteins and nucleic acids — which must be removed from the body or they become toxic. The process of removing these harmful metabolic wastes is called <span class="neet-term">excretion</span>. Animals excrete ammonia, urea, uric acid, CO₂ and water in different proportions depending on habitat and water availability. In humans, this job is carried out chiefly by a pair of <strong>kidneys</strong>, assisted by the lungs, liver and skin. This chapter covers the modes of nitrogenous excretion, the anatomy of the human excretory system, the structure of the nephron, the physiology of urine formation (filtration, reabsorption, secretion), the countercurrent mechanism that concentrates urine, hormonal regulation of kidney function, micturition, and common disorders — all extremely high-yield for NEET.</p>
 
@@ -4465,7 +4474,7 @@
 
             <section class="section-card" data-tilt id="phys-ch1-units-dimensions">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 1</span> Units and Dimensions
-                    <button class="bookmark-btn" data-id="phys-ch1-units-dimensions" data-title="Physics Ch 1: Units and Dimensions" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="phys-ch1-units-dimensions" data-title="Physics Ch 1: Units and Dimensions" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Physics is a science of measurement. Every measurable property — length, mass, time, temperature — is a <span class="neet-term">physical quantity</span>, and every measurement is meaningless without a standard reference called a <span class="neet-term">unit</span>. This chapter builds the toolkit used throughout physics: standard units, dimensional formulae, and rules for handling measured numbers.</p>
 
@@ -4786,7 +4795,7 @@
 
             <section class="section-card" data-tilt id="phys-ch2-vectors">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 2</span> Vectors
-                    <button class="bookmark-btn" data-id="phys-ch2-vectors" data-title="Physics Ch 2: Vectors" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="phys-ch2-vectors" data-title="Physics Ch 2: Vectors" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Physical quantities like distance and speed need only a number and unit to be fully described — these are <span class="neet-term">scalars</span>. But quantities like displacement, velocity and force also need a direction — these are <span class="neet-term">vectors</span>. This chapter covers vector representation, types, addition/subtraction, and the two ways of "multiplying" vectors — the dot and cross products.</p>
 
@@ -4991,7 +5000,7 @@
 
             <section class="section-card" data-tilt id="phys-ch3-motion-straight-line">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 3</span> Motion in a Straight Line
-                    <button class="bookmark-btn" data-id="phys-ch3-motion-straight-line" data-title="Physics Ch 3: Motion in a Straight Line" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="phys-ch3-motion-straight-line" data-title="Physics Ch 3: Motion in a Straight Line" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>An object is said to be in <span class="neet-term">motion</span> if its position changes with time relative to a chosen reference point (origin). When this change happens strictly along a single straight line — like a car on a straight road or a stone falling vertically — the motion is called <span class="neet-term">rectilinear motion</span> or motion in one dimension. This chapter builds the complete kinematic toolkit (position, displacement, velocity, acceleration, the equations of motion and their graphical interpretation) needed for every later chapter in mechanics, including motion in a plane and projectile motion.</p>
 
@@ -5204,7 +5213,7 @@
 
             <section class="section-card" data-tilt id="phys-ch4-motion-plane">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 4</span> Motion in a Plane
-                    <button class="bookmark-btn" data-id="phys-ch4-motion-plane" data-title="Physics Ch 4: Motion in a Plane" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="phys-ch4-motion-plane" data-title="Physics Ch 4: Motion in a Plane" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Real motion rarely stays confined to a single straight line — a thrown ball, an orbiting satellite, or a car turning a corner all move in two (or three) dimensions. This chapter extends the kinematics of Chapter 3 using vector algebra (Chapter 2) to describe motion in a plane, and builds up two of the most heavily tested NEET topics: <span class="neet-term">projectile motion</span> and <span class="neet-term">circular motion</span>.</p>
 
@@ -5402,7 +5411,7 @@
 
             <section class="section-card" data-tilt id="phys-ch5-laws-of-motion">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 5</span> Laws of Motion
-                    <button class="bookmark-btn" data-id="phys-ch5-laws-of-motion" data-title="Physics Ch 5: Laws of Motion" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="phys-ch5-laws-of-motion" data-title="Physics Ch 5: Laws of Motion" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Chapters 3 and 4 described <em>how</em> objects move (kinematics) without asking <em>why</em>. This chapter — <span class="neet-term">dynamics</span> — answers that question. Newton's three laws of motion connect force to motion, giving a single unified framework that explains everything from a book resting on a table to a satellite orbiting the Earth.</p>
 
@@ -5664,7 +5673,7 @@
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
         <section id="cellunit" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-shapes"></i> Chapter 1: Cell — The Unit of Life (Class 11 NEET Foundation)
-                <button class="bookmark-btn" data-id="cellunit" data-title="Chapter 1: Cell - The Unit of Life" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="cellunit" data-title="Chapter 1: Cell - The Unit of Life" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
 
             <div class="tab-buttons">
@@ -6159,7 +6168,7 @@
 
         <section id="overview" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-circle-nodes"></i> Chapter 2: Overview of the Cell Cycle
-                <button class="bookmark-btn" data-id="overview" data-title="Chapter 2: Overview of the Cell Cycle" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="overview" data-title="Chapter 2: Overview of the Cell Cycle" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
 
             <div class="grid-2">
@@ -6238,7 +6247,7 @@
 
         <section id="interphase" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-hourglass-half"></i> Detailed Breakdown of Interphase
-                <button class="bookmark-btn" data-id="interphase" data-title="Detailed Breakdown of Interphase" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="interphase" data-title="Detailed Breakdown of Interphase" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Interphase is the biosynthetic preparatory phase where the cell prepares for division through ordered cell growth and DNA replication.</p>
 
@@ -6309,7 +6318,7 @@
 
         <section id="mitosis" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-arrows-split-up-and-left"></i> Mitosis (Equational Division)
-                <button class="bookmark-btn" data-id="mitosis" data-title="Mitosis (Equational Division)" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="mitosis" data-title="Mitosis (Equational Division)" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Mitosis occurs in somatic cells (2n → 2n), ensuring exact genetic identicalness in daughter cells.</p>
 
@@ -6503,7 +6512,7 @@
 
         <section id="meiosis" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-shuffle"></i> Meiosis — Reductional & Equational Divisions
-                <button class="bookmark-btn" data-id="meiosis" data-title="Meiosis (Reductional & Equational Divisions)" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="meiosis" data-title="Meiosis (Reductional & Equational Divisions)" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Meiosis is a two-stage process where a diploid cell (2n) undergoes two successive divisions to produce four haploid gametes (n). <strong>Meiosis I reduces chromosome number (reductional)</strong>, while <strong>Meiosis II distributes sister chromatids (equational)</strong>.</p>
 
@@ -7022,7 +7031,7 @@
 
         <section id="calculator" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-calculator"></i> Chromosome / DNA Content Calculator
-                <button class="bookmark-btn" data-id="calculator" data-title="Chromosome / DNA Content Calculator" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="calculator" data-title="Chromosome / DNA Content Calculator" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Enter a diploid chromosome number and pick a phase to instantly see chromosome and DNA (C-value) content.</p>
 
@@ -7051,7 +7060,7 @@
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
         <section id="livingworld" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-leaf"></i> Chapter 3: The Living World
-                <button class="bookmark-btn" data-id="livingworld" data-title="Chapter 3: The Living World" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="livingworld" data-title="Chapter 3: The Living World" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
 
             <p>The Earth contains millions of organisms differing in size, shape, habitat, nutrition and reproduction. This variety is called <strong>Biodiversity</strong> — a term popularised by W.G. Rosen (1985) referring to the diversity of organisms at all levels, from genes to ecosystems, that exists on Earth. Estimates place the total number of species (described plus undescribed) anywhere from 1.7 million (described so far) to over 8–30 million if unstudied groups such as insects, fungi and marine organisms are included.</p>
@@ -7335,7 +7344,7 @@
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
         <section id="morphology" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-seedling"></i> Chapter 4: Morphology of Flowering Plants
-                <button class="bookmark-btn" data-id="morphology" data-title="Chapter 4: Morphology of Flowering Plants" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="morphology" data-title="Chapter 4: Morphology of Flowering Plants" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Angiosperms show incredible diversity in external form (morphology), yet every flowering plant shares the same basic body plan — a root system, a shoot system bearing stem and leaves, and (in the reproductive phase) inflorescences, flowers, fruits and seeds.</p>
 
@@ -8026,7 +8035,7 @@
         <button class="back-to-chapters-btn" onclick="showChapterList()"><i class="fa-solid fa-arrow-left"></i> Back to Botany</button>
         <section id="bioclass" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-sitemap"></i> Chapter 5: Biological Classification
-                <button class="bookmark-btn" data-id="bioclass" data-title="Chapter 5: Biological Classification" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="bioclass" data-title="Chapter 5: Biological Classification" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
 
             <p>Early classifications grouped all living organisms into just two kingdoms — <strong>Plantae</strong> and <strong>Animalia</strong> — based mainly on whether the organism was mobile, whether it could photosynthesise, and whether it had a cell wall. This two-kingdom system, credited to <strong>Linnaeus</strong>, was simple but had a fundamental flaw: it did not distinguish between the prokaryotes and eukaryotes, between unicellular and multicellular organisms, or between photosynthetic (autotrophic) and non-photosynthetic (heterotrophic) organisms. Many organisms — bacteria, fungi, single-celled motile algae — did not fit cleanly into either kingdom, so more scientific classification systems evolved over time based on cell structure, thallus organisation, mode of nutrition, mode of reproduction, phylogenetic relationships and habitat.</p>
@@ -8413,7 +8422,7 @@
 
             <section class="section-card" data-tilt id="chem-ch1-mole-concept">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 1</span> Some Basic Concepts of Chemistry — Mole Concept &amp; Stoichiometry
-                    <button class="bookmark-btn" data-id="chem-ch1-mole-concept" data-title="Chemistry Ch 1: Mole Concept & Stoichiometry" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="chem-ch1-mole-concept" data-title="Chemistry Ch 1: Mole Concept & Stoichiometry" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Chemistry is fundamentally a quantitative science — reactions occur between fixed numbers of particles, not fixed masses "by feel." The <span class="neet-term">mole concept</span> is the bridge that lets us convert between the invisible world of atoms/molecules and the measurable world of grams and litres in the lab. Nearly every numerical NEET question — from stoichiometry to solutions to electrochemistry — ultimately reduces to this chapter's tools.</p>
 
@@ -8676,7 +8685,7 @@
 
             <section class="section-card" data-tilt id="chem-ch2-structure-atom">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 2</span> Structure of Atom
-                    <button class="bookmark-btn" data-id="chem-ch2-structure-atom" data-title="Chemistry Ch 2: Structure of Atom" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="chem-ch2-structure-atom" data-title="Chemistry Ch 2: Structure of Atom" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>The atom was once thought to be the smallest, indivisible particle of matter. Discoveries between 1897 and 1932 revealed that the atom itself is built from smaller <span class="neet-term">subatomic particles</span> — the electron, proton and neutron — and that these particles are arranged in a very specific way that determines how each element behaves chemically.</p>
 
@@ -9037,7 +9046,7 @@
 
             <section class="section-card" data-tilt id="chem-ch3-periodic-table">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 3</span> Classification of Elements &amp; Periodicity in Properties
-                    <button class="bookmark-btn" data-id="chem-ch3-periodic-table" data-title="Chemistry Ch 3: Classification of Elements & Periodicity" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="chem-ch3-periodic-table" data-title="Chemistry Ch 3: Classification of Elements & Periodicity" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>With over 100 known elements, chemists needed a system to organise them so that elements with similar properties could be studied together. The modern <span class="neet-term">Periodic Table</span> arranges all elements in order of increasing atomic number, revealing a repeating ("periodic") pattern in their physical and chemical properties.</p>
 
@@ -9193,7 +9202,7 @@
 
             <section class="section-card" data-tilt id="chem-ch4-chemical-bonding">
                 <h2 class="section-title"><span class="chapter-card-badge" style="position:static; display:inline-block; margin-right:0.3rem;">Ch 4</span> Chemical Bonding &amp; Molecular Structure
-                    <button class="bookmark-btn" data-id="chem-ch4-chemical-bonding" data-title="Chemistry Ch 4: Chemical Bonding & Molecular Structure" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                    <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="chem-ch4-chemical-bonding" data-title="Chemistry Ch 4: Chemical Bonding & Molecular Structure" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
                 </h2>
                 <p>Atoms rarely exist alone — they combine to attain a more stable, lower-energy state, usually by acquiring a noble-gas-like electronic configuration. The force holding atoms together in this combined state is a <span class="neet-term">chemical bond</span>. This is one of the highest-yield NEET chapters — it is tested both directly (shapes, hybridisation, bond order) and indirectly through every other chapter in organic and inorganic chemistry.</p>
 
@@ -9882,7 +9891,7 @@
         <div id="view-games" class="app-view">
         <section id="ploidyGenerator" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-dna"></i> Ploidy &amp; C-Value Problem Generator
-                <button class="bookmark-btn" data-id="ploidyGenerator" data-title="Ploidy &amp; C-Value Problem Generator" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="ploidyGenerator" data-title="Ploidy &amp; C-Value Problem Generator" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Randomly generated practice problems across different organisms and cell-cycle stages. Work out the chromosome number and DNA content yourself, then check your answer.</p>
 
@@ -9921,7 +9930,7 @@
 
         <section id="spotTheError" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-magnifying-glass"></i> NCERT "Spot the Error" Challenge
-                <button class="bookmark-btn" data-id="spotTheError" data-title="NCERT Spot the Error Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="spotTheError" data-title="NCERT Spot the Error Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Read the passage below and click on any statement you believe is factually wrong. Some statements are deliberately incorrect — find them all.</p>
 
@@ -10035,7 +10044,7 @@
 
         <section id="sortSprint" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-bolt"></i> Sort Sprint: Mitosis or Meiosis?
-                <button class="bookmark-btn" data-id="sortSprint" data-title="Sort Sprint: Mitosis or Meiosis?" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="sortSprint" data-title="Sort Sprint: Mitosis or Meiosis?" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>A 45-second reflex round. A fact flashes on screen — sort it into <strong>Mitosis</strong> or <strong>Meiosis</strong> before the timer runs out. Chain correct answers for a streak bonus.</p>
 
@@ -10149,7 +10158,7 @@
 
         <section id="cellCycleSequencer" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-list-ol"></i> Cell Cycle Sequencer
-                <button class="bookmark-btn" data-id="cellCycleSequencer" data-title="Cell Cycle Sequencer" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="cellCycleSequencer" data-title="Cell Cycle Sequencer" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>The stages are shuffled — tap them back into the correct chronological order as fast as you can. A wrong tap costs a 3-second penalty, so slow down if you're unsure.</p>
 
@@ -10264,7 +10273,7 @@
 
         <section id="memoryMatch" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-clone"></i> Memory Match: Cell Cycle Stages
-                <button class="bookmark-btn" data-id="memoryMatch" data-title="Memory Match: Cell Cycle Stages" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="memoryMatch" data-title="Memory Match: Cell Cycle Stages" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Flip two tiles at a time and pair up every cell-cycle stage with its icon. Fewer moves and a faster clock earn a better score — beat your personal best!</p>
 
@@ -10377,7 +10386,7 @@
 
         <section id="mitosisAnimation" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-play-circle"></i> Live Mitosis Animation
-                <button class="bookmark-btn" data-id="mitosisAnimation" data-title="Live Mitosis Animation" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="mitosisAnimation" data-title="Live Mitosis Animation" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Watch a single cell move through every phase of mitosis in real time — chromosomes condense, align at the equator, split apart and the cell pinches into two. Hit play and let it run, or step through phase by phase at your own pace.</p>
 
@@ -10497,7 +10506,7 @@
 
         <section id="chromoScramble" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-keyboard"></i> Chromosome Scramble
-                <button class="bookmark-btn" data-id="chromoScramble" data-title="Chromosome Scramble" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="chromoScramble" data-title="Chromosome Scramble" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>A 60-second typing sprint. Unscramble the jumbled letters to reveal a key cell-division term before the clock runs out. Stuck? A hint costs half the points.</p>
 
@@ -10681,7 +10690,7 @@
 
         <section id="revisionWheel" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-record-vinyl"></i> Wheel of Revision
-                <button class="bookmark-btn" data-id="revisionWheel" data-title="Wheel of Revision" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="revisionWheel" data-title="Wheel of Revision" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Spin the wheel to land on a random phase of cell division, then answer a quick question about it. A fun, unpredictable way to sample the whole chapter instead of picking your own order.</p>
 
@@ -10790,7 +10799,7 @@
 
         <section id="dailyChallenge" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-calendar-check"></i> Daily Challenge
-                <button class="bookmark-btn" data-id="dailyChallenge" data-title="Daily Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="dailyChallenge" data-title="Daily Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>One fresh question every day, pulled from across Physics, Chemistry, Botany and Zoology. Answer it to keep your streak alive — a new question unlocks after midnight.</p>
 
@@ -10892,7 +10901,7 @@
 
         <section id="formulaFrenzy" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-square-root-variable"></i> Formula Frenzy
-                <button class="bookmark-btn" data-id="formulaFrenzy" data-title="Formula Frenzy" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="formulaFrenzy" data-title="Formula Frenzy" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>A 45-second sprint through the Physics formulas from Units &amp; Dimensions, Vectors, Motion and Laws of Motion. Pick the correct expression before time runs out.</p>
 
@@ -11001,7 +11010,7 @@
 
         <section id="periodicSprint" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-table-cells"></i> Periodic Table Sprint
-                <button class="bookmark-btn" data-id="periodicSprint" data-title="Periodic Table Sprint" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="periodicSprint" data-title="Periodic Table Sprint" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Five rounds, one instruction each — click every element on the first 36 that belongs to the named group or family. Wrong clicks cost points, so look before you tap.</p>
 
@@ -11103,7 +11112,7 @@
 
         <section id="trueFalseBlitz" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-scale-balanced"></i> True or False Blitz
-                <button class="bookmark-btn" data-id="trueFalseBlitz" data-title="True or False Blitz" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="trueFalseBlitz" data-title="True or False Blitz" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>A 30-second rapid-fire round mixing statements from every subject. Decide TRUE or FALSE before the clock runs out and chain a streak for bonus points.</p>
 
@@ -11214,7 +11223,7 @@
 
         <section id="readinessGauge" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-gauge-high"></i> NEET Readiness Gauge
-                <button class="bookmark-btn" data-id="readinessGauge" data-title="NEET Readiness Gauge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="readinessGauge" data-title="NEET Readiness Gauge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Log the marks from your latest Periodic Test, NRT or AIATS and watch an animated gauge translate it into a percentage and readiness tier, with your recent scores tracked alongside.</p>
 
@@ -11250,7 +11259,7 @@
         <!-- ===================== FEATURE: SMART REVISION QUEUE (SPACED REPETITION) ===================== -->
         <section id="srsReviewer" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-layer-group"></i> Smart Revision Queue
-                <button class="bookmark-btn" data-id="srsReviewer" data-title="Smart Revision Queue" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="srsReviewer" data-title="Smart Revision Queue" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Spaced repetition across every flashcard deck on the portal. Cards you find hard come back within a day; cards you know well drift weeks into the future — so your time goes to what you're actually shaky on.</p>
 
@@ -11283,7 +11292,7 @@
         <!-- ===================== FEATURE: STUDY STREAK HEATMAP ===================== -->
         <section id="streakHeatmap" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-fire"></i> Study Streak Heatmap
-                <button class="bookmark-btn" data-id="streakHeatmap" data-title="Study Streak Heatmap" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="streakHeatmap" data-title="Study Streak Heatmap" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Every day you open a chapter, take a quiz, or play a game lights up a square below. Consistency beats intensity — try to never leave two days blank in a row.</p>
 
@@ -11304,7 +11313,7 @@
         <!-- ===================== FEATURE: HIGH-YIELD TOPIC TRACKER ===================== -->
         <section id="pyqTracker" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-chart-column"></i> High-Yield Topic Tracker
-                <button class="bookmark-btn" data-id="pyqTracker" data-title="High-Yield Topic Tracker" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="pyqTracker" data-title="High-Yield Topic Tracker" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>An indicative guide to how often each topic tends to show up in NEET-pattern papers, so you know where to spend the next hour. Treat the bars as a priority guide, not an exact PYQ count.</p>
 
@@ -11317,7 +11326,7 @@
         <!-- ===================== FEATURE: DIAGRAM LABELING CHALLENGE ===================== -->
         <section id="diagramLabel" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-diagram-project"></i> Diagram Labeling Challenge
-                <button class="bookmark-btn" data-id="diagramLabel" data-title="Diagram Labeling Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="diagramLabel" data-title="Diagram Labeling Challenge" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Tap a term from the word bank below, then tap the numbered pin on the diagram it belongs to.</p>
 
@@ -11340,7 +11349,7 @@
         <!-- ===================== FEATURE: DOUBT SOLVER ===================== -->
         <section id="doubtSolver" class="section-card" data-tilt>
             <h2 class="section-title"><i class="fa-solid fa-magnifying-glass-plus"></i> Doubt Solver
-                <button class="bookmark-btn" data-id="doubtSolver" data-title="Doubt Solver" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
+                <button class="bookmark-btn" aria-label="Toggle bookmark" data-id="doubtSolver" data-title="Doubt Solver" onclick="toggleBookmark(this)"><i class="fa-regular fa-bookmark"></i></button>
             </h2>
             <p>Type a doubt in your own words — this searches every question, explanation and flashcard on the portal for the closest matches. Nothing found? Save it to your Doubt Journal and come back to it later.</p>
 
@@ -17045,7 +17054,7 @@
                     <div><i class="fa-solid fa-bookmark"></i> ${b.title}<span class="bookmark-cat-tag">${b.cat}</span></div>
                     <div>
                         <button class="btn-action" style="padding:0.5rem 1rem; font-size:0.85rem;" onclick="openBookmark('${b.id}')">Open</button>
-                        <button class="btn-ghost-remove" onclick="removeBookmark('${b.id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-ghost-remove" aria-label="Remove bookmark" onclick="removeBookmark('${b.id}')"><i class="fa-solid fa-trash"></i></button>
                     </div>
                 </div>`).join('');
         }
@@ -17219,7 +17228,7 @@
                             <div class="weak-topic-sub">${r.correct} / ${r.total} correct across your attempts</div>
                         </div>
                         <div class="weak-topic-pct">${Math.round(r.pct)}%</div>
-                        ${r.chapterKey ? `<button class="weak-topic-go" title="Practice this chapter" onclick="goToWeakTopic('${r.subject}','${r.chapterKey}')"><i class="fa-solid fa-arrow-right"></i></button>` : ''}
+                        ${r.chapterKey ? `<button class="weak-topic-go" aria-label="Go to weak topic" title="Practice this chapter" onclick="goToWeakTopic('${r.subject}','${r.chapterKey}')"><i class="fa-solid fa-arrow-right"></i></button>` : ''}
                     </div>`).join('');
             } else {
                 weakCard.style.display = 'none';
