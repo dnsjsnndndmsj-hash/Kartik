@@ -2176,7 +2176,7 @@
 
 
     <!-- Gemini AI Voice Chat -->
-    <button id="geminiFab" onclick="toggleGeminiChat()" style="position: fixed; bottom: 22px; left: 22px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; border: none; box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5); z-index: 1100; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
+    <button id="geminiFab" onclick="toggleGeminiChat()" aria-label="Open Gemini AI Tutor" style="position: fixed; bottom: 22px; left: 22px; width: 56px; height: 56px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #3b82f6); color: white; border: none; box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.5); z-index: 1100; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: transform 0.2s, box-shadow 0.2s;">
         <i class="fa-solid fa-sparkles"></i>
     </button>
 
@@ -2186,14 +2186,14 @@
                 <div style="display: flex; align-items: center; gap: 10px; font-weight: 700;">
                     <i class="fa-solid fa-sparkles"></i> Gemini AI Tutor
                 </div>
-                <button onclick="toggleGeminiChat()" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.8;"><i class="fa-solid fa-xmark"></i></button>
+                <button aria-label="Close Gemini AI Tutor" onclick="toggleGeminiChat()" style="background: none; border: none; color: white; cursor: pointer; opacity: 0.8;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div id="geminiChatLog" style="padding: 1rem; height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.8rem; background: var(--surface); color: var(--text-main); font-size: 0.9rem;">
                 <div style="align-self: flex-start; background: var(--surface-subtle); padding: 0.6rem 1rem; border-radius: 12px 12px 12px 2px; max-width: 85%;">Hi! I'm your AI tutor. Click the mic and ask me a biology, chemistry, or physics question!</div>
             </div>
             <div style="padding: 0.8rem; border-top: 1px solid var(--border); display: flex; gap: 0.5rem; background: var(--surface);">
-                <button id="geminiMicBtn" onclick="startGeminiVoice()" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: var(--primary); border: none; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-microphone"></i></button>
-                <input type="text" id="geminiTextInput" placeholder="Or type a question..." style="flex: 1; border: 1px solid var(--border); border-radius: 20px; padding: 0 1rem; background: var(--surface-subtle); color: var(--text-main); outline: none;" onkeydown="if(event.key==='Enter') sendGeminiText()">
+                <button id="geminiMicBtn" aria-label="Start voice input" onclick="startGeminiVoice()" style="flex-shrink: 0; width: 40px; height: 40px; border-radius: 50%; background: var(--primary-light); color: var(--primary); border: none; cursor: pointer; transition: all 0.2s;"><i class="fa-solid fa-microphone"></i></button>
+                <input type="text" id="geminiTextInput" aria-label="Type a question for Gemini" placeholder="Or type a question..." style="flex: 1; border: 1px solid var(--border); border-radius: 20px; padding: 0 1rem; background: var(--surface-subtle); color: var(--text-main); outline: none;" onkeydown="if(event.key==='Enter') sendGeminiText()">
             </div>
         </div>
     </div>
