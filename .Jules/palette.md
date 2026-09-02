@@ -1,0 +1,3 @@
+## 2024-05-18 - Missing ARIA Labels on Icon-Only Floating Elements
+**Learning:** Icon-only floating action buttons (FABs) and interactive UI elements inside modular overlays (like the Gemini AI chat) are frequently missing accessible names. Screen readers cannot interpret what a `<button><i class="fa-solid fa-microphone"></i></button>` does without explicit labels.
+**Action:** When adding new interactive components, especially floating or hidden-by-default modals, ensure all icon-only buttons and placeholder-reliant text inputs have descriptive `aria-label` attributes (e.g., `aria-label="Start voice input"`).
