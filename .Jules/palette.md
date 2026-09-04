@@ -1,0 +1,3 @@
+## 2024-09-04 - Adding implicit accessibility to labels without introducing regressions
+**Learning:** Associating `<label>` and `<input>` with the `for` attribute improves both accessibility and interaction (click-to-focus) without introducing the regression described in the project memory regarding `aria-label` overriding `<label>` elements in screen readers. It allows screen readers to read the correct purpose of the input and enables users to click the label text to focus the associated input field.
+**Action:** Use the `for` attribute on `<label>` elements to implicitly link them to their corresponding inputs (`id`) instead of relying on `aria-label` which might override the text in screen readers.
