@@ -1,0 +1,3 @@
+## 2024-05-19 - Use `for` attribute instead of `aria-label` for form inputs
+**Learning:** When improving accessibility, do not blindly apply `aria-label` attributes to form inputs using their placeholder text. An `aria-label` overrides any associated `<label>` elements in screen readers, which introduces accessibility regressions (e.g., reading out example values instead of the input's actual purpose).
+**Action:** Use the `for` attribute on `<label>` elements to link them to their corresponding input fields (`id`). This improves accessibility and enables click-to-focus interaction without risking the screen reader regressions associated with improperly applied `aria-label` attributes.
