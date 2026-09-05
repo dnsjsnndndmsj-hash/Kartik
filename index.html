@@ -8634,27 +8634,27 @@
                     </div>
 
                     <div class="tab-content active" id="chemTab-mass">
-                        <label class="calc-label">Given Mass (g)</label>
+                        <label class="calc-label" for="chemMassInput">Given Mass (g)</label>
                         <input type="number" class="calc-input" id="chemMassInput" placeholder="e.g. 88">
-                        <label class="calc-label">Molar Mass (g/mol)</label>
+                        <label class="calc-label" for="chemMolarMassInput">Molar Mass (g/mol)</label>
                         <input type="number" class="calc-input" id="chemMolarMassInput" placeholder="e.g. 44">
                         <button class="btn-action" onclick="chemCalcMoles()">Calculate Moles</button>
                         <p id="chemMassResult" style="margin-top:0.8rem; font-weight:600; color:var(--primary);"></p>
                     </div>
 
                     <div class="tab-content" id="chemTab-yield">
-                        <label class="calc-label">Actual Yield</label>
+                        <label class="calc-label" for="chemActualYieldInput">Actual Yield</label>
                         <input type="number" class="calc-input" id="chemActualYieldInput" placeholder="e.g. 34">
-                        <label class="calc-label">Theoretical Yield</label>
+                        <label class="calc-label" for="chemTheoreticalYieldInput">Theoretical Yield</label>
                         <input type="number" class="calc-input" id="chemTheoreticalYieldInput" placeholder="e.g. 40">
                         <button class="btn-action" onclick="chemCalcYield()">Calculate % Yield</button>
                         <p id="chemYieldResult" style="margin-top:0.8rem; font-weight:600; color:var(--primary);"></p>
                     </div>
 
                     <div class="tab-content" id="chemTab-purity">
-                        <label class="calc-label">Sample Mass (g)</label>
+                        <label class="calc-label" for="chemSampleMassInput">Sample Mass (g)</label>
                         <input type="number" class="calc-input" id="chemSampleMassInput" placeholder="e.g. 200">
-                        <label class="calc-label">Purity (%)</label>
+                        <label class="calc-label" for="chemPurityInput">Purity (%)</label>
                         <input type="number" class="calc-input" id="chemPurityInput" placeholder="e.g. 80">
                         <button class="btn-action" onclick="chemCalcPurity()">Calculate Pure Mass</button>
                         <p id="chemPurityResult" style="margin-top:0.8rem; font-weight:600; color:var(--primary);"></p>
