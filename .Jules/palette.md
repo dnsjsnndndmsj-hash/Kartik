@@ -1,0 +1,3 @@
+## 2024-05-24 - Accessibility: ARIA Labels vs Labels
+**Learning:** Do not blindly apply `aria-label` attributes to form inputs using their `placeholder` text. An `aria-label` overrides any associated `<label>` elements in screen readers, which introduces accessibility regressions (e.g., reading out example values instead of the input's actual purpose). Instead, use the `for` attribute on `<label>` elements to link them to their corresponding input fields (`id`).
+**Action:** Always link `<label for="...">` to `<input id="...">` for inputs, rather than using `aria-label` based on placeholder text.
