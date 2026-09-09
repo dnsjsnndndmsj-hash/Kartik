@@ -1,0 +1,3 @@
+## 2024-09-09 - Floating Action Button ARIA Labels
+**Learning:** Floating action buttons and icon-only modal triggers commonly lack ARIA labels, causing accessibility issues for screen reader users who cannot infer their purpose visually.
+**Action:** Always ensure any icon-only buttons (such as chat toggles, mic buttons, and sidebar toggles) have descriptive `aria-label` attributes to ensure interface accessibility.
